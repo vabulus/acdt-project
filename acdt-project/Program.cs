@@ -3,6 +3,7 @@ using System;
 using System.Globalization;
 using acdt_project.Classes;
 using acdt_project.Enums;
+using Google.Protobuf.WellKnownTypes;
 
 
 Incident incident = new Incident();
@@ -14,8 +15,7 @@ incident.Status = Status.Open;
 incident.Cve = "CVE-2021-1234";
 incident.System = "Windows 10";
 incident.Description = "This is a test incident";
-incident.CreatedAt = DateTime.Now;
-
+incident.CreatedAt = new Timestamp();
 
 incident.AddIncident();
 incident.EditIncident();

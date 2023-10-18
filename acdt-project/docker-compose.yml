@@ -3,7 +3,7 @@ version: '3.7'
 services:
   mariadb:
     image: mariadb:latest
-    container_name: mariadb_container
+    container_name: acdt-mariadb
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: incidents
@@ -12,3 +12,10 @@ services:
     ports:
       - "3306:3306"
     restart: always
+  webapp:
+    image: acdt-project:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:80"

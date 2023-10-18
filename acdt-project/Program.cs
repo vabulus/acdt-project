@@ -5,114 +5,175 @@ using acdt_project.Enums;
 
 string defaultText = "Options:\n" +
                       "1 – Show Incidents\n" +
-                      "2 – Add Incidents\n" +
-                      "3 – Edit Incidents\n" +
-                      "4 – Close Incidents\n" +
+                      "2 – Add Incident\n" +
+                      "3 – Edit Incident\n" +
+                      "4 – Close Incident\n" +
                       "5 – Exit\n";
 
+User userObj = UserAuthentication();
 
 string userInput = ""; 
 do
 {
-    User userObj = UserAuthentication();
-    
+    Console.Clear();
     Console.WriteLine(defaultText);
     Console.Write("Enter your choice: ");
     userInput = Console.ReadLine() ?? "";
     
-    switch (Convert.ToInt32(userInput))
+    // we are not lazy loading, because for almost any operation we need the user object. this position is optimal, cuz user has to think about his next actions
+    List<Incident> incidentList = Incident.FetchIncidents();
+    
+    switch (Convert.ToInt32(userInput) - 1)
     {
-        case 1:
-            foreach (var incident in Incident.ShowIncident())
-            {
-                Console.WriteLine(incident.IncidentId);
-                Console.WriteLine(incident.Severity);
-                Console.WriteLine(incident.Status);
-                Console.WriteLine(incident.Cve);
-                Console.WriteLine(incident.CreatedAt);
-                Console.WriteLine(incident.Issuer);
-                Console.WriteLine(incident.System);
-                Console.WriteLine(incident.Description);
-            }
+        case (int)MenuOption.ShowIncidents:
+            ShowIncidents(incidentList);
             break;
-        case 2:
-            Severity severityUser = GetSeverityInput("Enter the severity of the incident (1-4, default = 1): ");
-            string cve = GetInput("Enter the CVE of the incident: ");
-            string system = GetInput("Enter the system of the incident: ");
-            string description = GetInput("Enter the description of the incident: ");
-            
-            Incident incidentObj = new Incident(
-                severityUser,
-                Status.Open,
-                cve,
-                DateTime.Now,
-                userObj.UserId,
-                system,
-                description
-            );
-            
-            Incident.AddIncident(incidentObj);
-            
-            break;
-        case 3:
-            List<Incident> incidentList = Incident.ShowIncident();
 
-            if (incidentList.Count > 0)
-            {
-                Incident? incidentToEdit = null; 
-                while (incidentToEdit == null)
-                {
-                    foreach (var incident in incidentList)
-                    {
-                        Console.WriteLine(incident.IncidentId + " – " + incident.Description);
-                    }
+        case (int)MenuOption.AddIncident:
+            AddIncident(userObj);
+            break;
 
-                    string incidentId = GetInput("Enter the ID of the incident you want to edit: ");
-                    
-                    if (int.TryParse(incidentId, out int parsedId))
-                    {
-                        
-                        incidentToEdit = Incident.GetIncident(parsedId);
-                        if (incidentToEdit != null)
-                        {
-                            incidentToEdit.Status = GetStatusInput($"Status (default = {incidentToEdit.Status.ToString()}):", true);
-                            incidentToEdit.Severity = GetSeverityInput($"Severity (default = {incidentToEdit.Severity.ToString()}): ", true);
-                            incidentToEdit.Cve = GetInput($"CVE (default = {incidentToEdit.Cve}): ", true);
-                            incidentToEdit.Description = GetInput($"Description (default = {incidentToEdit.Description}): ", true);
-                            
-                            Incident.UpdateIncident(incidentToEdit);                        
-                        }
-                        
-                        else
-                        {
-                            Console.WriteLine("No incident found with the given ID!");
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine("Invalid ID! Please enter a valid incident ID.");
-                    }
-                }
-            }
-            else
-            {
-                Console.WriteLine("No incidents found!");
-            }
-            
+        case (int)MenuOption.EditIncident:
+            EditIncident(incidentList);
             break;
-        case 4:
-            // todo: copy only the status from case 3 and change the status to closed
-            
-            Incident.CloseIncident();
+
+        case (int)MenuOption.CloseIncident:
+            CloseIncident(incidentList);
             break;
-        case 5:
+
+        case (int)MenuOption.Exit:
             Environment.Exit(0);
             break;
+
         default:
+            Console.WriteLine("Invalid choice. Please select a valid option.");
             break;
     }
 
 } while (Convert.ToInt32(userInput) != 5);
+
+static void ShowIncidents(List<Incident> incidentList)
+{
+    foreach (var incident in incidentList)
+    {
+        Console.WriteLine(incident.ToString());
+    }
+    Console.WriteLine("Press any key to continue...");
+    Console.ReadKey();
+}
+
+static void AddIncident(User userObj)
+{
+    Console.Clear();
+    
+    Severity severityUser = GetSeverityInput("Enter the severity of the incident (1-4, default = 1): ");
+    string cve = GetInput("Enter the CVE of the incident: ");
+    string system = GetInput("Enter the system of the incident: ");
+    string description = GetInput("Enter the description of the incident: ");
+            
+    Incident incidentObj = new Incident(
+        severityUser,
+        Status.Open,
+        cve,
+        DateTime.Now,
+        userObj.UserId,
+        system,
+        description
+    );
+            
+    Incident.AddIncident(incidentObj);
+    Console.WriteLine("Incident added successfully!\nPress any key to continue...");
+    Console.ReadKey();
+}
+
+static void EditIncident(List<Incident> incidentList)
+{
+    if (incidentList.Count > 0)
+    {
+        Incident? incidentToEdit = null; 
+        while (incidentToEdit == null)
+        {
+            foreach (var incident in incidentList)
+            {
+                Console.WriteLine(incident.IncidentId + " – " + incident.Description);
+            }
+
+            string incidentId = GetInput("Enter the ID of the incident you want to edit: ");
+                    
+            if (int.TryParse(incidentId, out int parsedId))
+            {
+                incidentToEdit = Incident.GetIncident(parsedId);
+                if (incidentToEdit != null)
+                {
+                    incidentToEdit.Status = GetStatusInput($"Status (default = {incidentToEdit.Status.ToString()}):", true);
+                    incidentToEdit.Severity = GetSeverityInput($"Severity (default = {incidentToEdit.Severity.ToString()}): ", true);
+                    incidentToEdit.Cve = GetInput($"CVE (default = {incidentToEdit.Cve}): ", true);
+                    incidentToEdit.Description = GetInput($"Description (default = {incidentToEdit.Description}): ", true);
+                            
+                    Incident.UpdateIncident(incidentToEdit);  
+                    Console.WriteLine($"Incident ID {incidentToEdit.IncidentId} edited successfully!\nPress any key to continue...");
+                    Console.ReadKey();
+                }
+                        
+                else
+                {
+                    Console.WriteLine("No incident found with the given ID!");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Invalid ID! Please enter a valid incident ID.");
+            }
+        }
+    }
+    else
+    {
+        Console.WriteLine("No incidents found!");
+    }
+}
+
+static void CloseIncident(List<Incident> incidentList)
+{
+    if (incidentList.Count > 0)
+    {
+        Incident? incidentToEdit = null; 
+        while (incidentToEdit == null)
+        {
+            foreach (var incident in incidentList)
+            {
+                Console.WriteLine(incident.IncidentId + " – " + incident.Description);
+            }
+
+            string incidentId = GetInput("Enter the ID of the incident you want to close: ");
+                    
+            if (int.TryParse(incidentId, out int parsedId))
+            {
+                incidentToEdit = Incident.GetIncident(parsedId);
+                if (incidentToEdit != null)
+                {
+                    incidentToEdit.Status = Status.Closed;
+                    Incident.UpdateIncident(incidentToEdit);     
+                    Console.WriteLine($"Incident ID {incidentToEdit.IncidentId} closed successfully!\nPress any key to continue...");
+                    Console.ReadKey();
+                }
+                        
+                else
+                {
+                    Console.WriteLine("No incident found with the given ID!");
+                }
+                        
+            }
+            else
+            {
+                Console.WriteLine("Invalid ID! Please enter a valid incident ID.");
+            }
+        }
+    }
+    else
+    {
+        Console.WriteLine("No incidents found!");
+    }
+}
 
 
 static User UserAuthentication()
@@ -129,7 +190,6 @@ static User UserAuthentication()
 
     return user;
 }
-
 
 static Severity GetSeverityInput(string prompt, bool defaultAllowed = false)
 {

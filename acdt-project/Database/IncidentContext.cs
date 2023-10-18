@@ -22,7 +22,13 @@ namespace acdt_project.Database
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             
-            modelBuilder.Entity<Incident>().ToTable("Incident").HasKey(i => i.IncidentId).HasName("primaryKey");
+            modelBuilder.Entity<Incident>()
+                .Property(e => e.Severity)
+                .HasConversion<int>();
+
+            modelBuilder.Entity<Incident>()
+                .Property(e => e.Status)
+                .HasConversion<int>();
         }
     }
 }

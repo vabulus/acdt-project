@@ -1,25 +1,29 @@
 ﻿// import random library
 using System;
-using System.Globalization;
+using System.Globalization;using System.Runtime.InteropServices.JavaScript;
 using acdt_project.Classes;
+using acdt_project.Database;
 using acdt_project.Enums;
-using Google.Protobuf.WellKnownTypes;
 
 
-Incident incident = new Incident();
+Incident incidentObj = new Incident();
 
-incident.IncidentId = 1;
-incident.Severity = Severity.High;
-incident.Issuer = 1;
-incident.Status = Status.Open;
-incident.Cve = "CVE-2021-1234";
-incident.System = "Windows 10";
-incident.Description = "This is a test incident";
-incident.CreatedAt = new Timestamp();
+incidentObj.IncidentId = 1;
+incidentObj.Severity = Severity.High;
+incidentObj.Issuer = 1;
+incidentObj.Status = Status.Open;
+incidentObj.Cve = "CVE-2021-1234";
+incidentObj.System = "Windows 10";
+incidentObj.Description = "This is a test incident";
+incidentObj.CreatedAt = DateTime.Now;
 
-incident.AddIncident();
-incident.EditIncident();
-incident.CloseIncident();
+
+using (var context = new IncidentContext())
+{
+    context.Incidents.Add(incidentObj);
+    context.SaveChanges();
+}   
+
 
 
 
@@ -41,16 +45,16 @@ do
     switch (Convert.ToInt32(userInput))
     {
         case 1:
-            incident.ShowIncident();
+            incidentObj.ShowIncident();
             break;
         case 2:
-            incident.AddIncident();
+            incidentObj.AddIncident();
             break;
         case 3:
-            incident.EditIncident();
+            incidentObj.EditIncident();
             break;
         case 4:
-            incident.CloseIncident();
+            incidentObj.CloseIncident();
             break;
         case 5:
             Environment.Exit(0);

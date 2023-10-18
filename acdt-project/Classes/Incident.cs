@@ -15,7 +15,7 @@ public class Incident
     public Status Status { get; set; }
     
     public string Cve { get; set; }
-    public Timestamp CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
     public int Issuer { get; set; }
     public string System { get; set; }
     public string Description { get; set; }

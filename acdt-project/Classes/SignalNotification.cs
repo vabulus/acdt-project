@@ -10,6 +10,6 @@ public class SignalNotification :INotification
 
     public void Notify()
     {
-        throw new NotImplementedException();
+        Console.WriteLine("Notification send to " + Receiver + "from " + Sender + " via Signal");
     }
 }

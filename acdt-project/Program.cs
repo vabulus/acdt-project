@@ -8,7 +8,7 @@ using acdt_project.Enums;
 
 Incident incidentObj = new Incident();
 
-incidentObj.IncidentId = 1;
+incidentObj.IncidentId = 2;
 incidentObj.Severity = Severity.High;
 incidentObj.Issuer = 1;
 incidentObj.Status = Status.Open;

@@ -81,7 +81,7 @@ public class Incident
         throw new NotImplementedException();
     }
 
-    public static List<Incident> ShowIncident()
+    public static List<Incident> FetchIncidents()
     {
         using (var context = new IncidentContext())
         {

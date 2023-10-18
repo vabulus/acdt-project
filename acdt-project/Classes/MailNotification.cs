@@ -11,6 +11,7 @@ public class MailNotification :INotification
     public int NotificationId { get; set; }
     public int Sender { get; set; }
     public int Receiver { get; set; }
+    private string hey;
 
     public MailNotification(UserContext dbContext)
     {

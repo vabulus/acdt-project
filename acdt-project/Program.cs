@@ -11,6 +11,7 @@ string defaultText = "Options:\n" +
                       "5 – Exit\n";
 
 User userObj = UserAuthentication();
+Role roleObj = new Role();
 
 string userInput = ""; 
 do
@@ -51,6 +52,25 @@ do
     }
 
 } while (Convert.ToInt32(userInput) != 5);
+
+do
+{
+    switch (Convert.ToInt32(userInput) - 1)
+    {
+        case (int)MenuOptionUser.AddUser:
+            AddUser(roleObj);
+            break;
+        case (int)MenuOptionUser.DeleteUser:
+            DeleteUser();
+            break;
+        case (int)MenuOptionUser.Exit:
+            Environment.Exit(0);
+            break;
+        default:
+            Console.WriteLine("Invalid choice. Please select a valid option.");
+            break;
+    }
+} while (Convert.ToInt32(userInput) != 2);
 
 static void ShowIncidents(List<Incident> incidentList)
 {
@@ -175,6 +195,29 @@ static void CloseIncident(List<Incident> incidentList)
     }
 }
 
+static void AddUser(Role roleobj)
+{
+    Console.Clear();
+    string userName = GetInput("Enter your Username: ");
+    string phoneNumber = GetInput("Enter your Phonenumber: ");
+    string email = GetInput("Enter your email address: ");
+    
+    User newUserObj = new User(
+        userName,
+        roleobj.roleID,
+        phoneNumber,
+        email
+        );
+            
+    User.AddUser(newUserObj);
+    Console.WriteLine("User added successfully!\nPress any key to continue...");
+    Console.ReadKey();
+}
+
+static void DeleteUser()
+{
+    
+}
 
 static User UserAuthentication()
 {

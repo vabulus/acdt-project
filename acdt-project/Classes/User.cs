@@ -1,3 +1,5 @@
+using acdt_project.Database;
+
 namespace acdt_project.Classes;
 
 public class User
@@ -16,10 +18,22 @@ public class User
         EMail = eMail;
         UserId = userId;
     }
-    
-    public void AddUser()
+
+    public User(string username, int roleId, string phoneNumber, string eMail)
     {
-        throw new NotImplementedException();
+        Username = username;
+        RoleId = roleId;
+        PhoneNumber = phoneNumber;
+        EMail = eMail;
+    }
+
+    public static void AddUser(User userObj)
+    {
+        using (var context = new UserContext())
+        {
+            context.Users.Add(userObj);
+            context.SaveChanges();
+        }
     }
 
     public void DeleteUser()

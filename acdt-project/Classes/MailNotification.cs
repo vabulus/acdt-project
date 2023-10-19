@@ -1,8 +1,9 @@
 using acdt_project.Database;
+using Org.BouncyCastle.Bcpg;
 
 namespace acdt_project.Classes;
 
-public class MailNotification :INotification
+public class MailNotification : INotification
 {
     private readonly UserContext dbContext;
     
@@ -11,14 +12,22 @@ public class MailNotification :INotification
     public int NotificationId { get; set; }
     public int Sender { get; set; }
     public int Receiver { get; set; }
-    private string hey;
-
-    public MailNotification(UserContext dbContext)
-    {
-        this.dbContext = dbContext;
-    }
+    
     public void Notify()
     {
-       // Console.WriteLine("Notification send to " + Receiver + "from " + Sender + " via Mail");
+       using (var dbContext = new UserContext())
+       {
+           var user = dbContext.Users.FirstOrDefault(u => u.UserId == Receiver);
+
+           if (user != null)
+           {
+               Console.WriteLine($"Mail Message sent to {user.Username} via {user.EMail} ");
+           }
+           else
+           {
+               Console.WriteLine("User not found");
+           }
+       }
+       
     }
 }

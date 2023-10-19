@@ -1,9 +1,11 @@
+using System.ComponentModel.DataAnnotations;
 using acdt_project.Database;
 
 namespace acdt_project.Classes;
 
 public class User
 {
+    [Key]
     public int UserId { get; set; }
     public string Username { get; set; }
     public int RoleId { get; set; }
@@ -33,6 +35,14 @@ public class User
         {
             context.Users.Add(userObj);
             context.SaveChanges();
+        }
+    }
+
+    public static User GetUser(int userId)
+    {
+        using (var context = new UserContext())
+        { 
+            return context.Users.SingleOrDefault(i => i.UserId == userId);
         }
     }
 

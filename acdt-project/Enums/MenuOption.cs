@@ -6,5 +6,8 @@ public enum MenuOption
     AddIncident,
     EditIncident,
     CloseIncident,
+    Escalate,
+    AddUser,
+    DeleteUser,
     Exit
 }

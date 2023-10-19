@@ -1,4 +1,4 @@
-﻿// import random library
+﻿using System.Xml;
 using acdt_project.Classes;
 using acdt_project.Enums;
 
@@ -8,10 +8,15 @@ string defaultText = "Options:\n" +
                       "2 – Add Incident\n" +
                       "3 – Edit Incident\n" +
                       "4 – Close Incident\n" +
-                      "5 – Exit\n";
+                      "5 – Escalate\n" +
+                      "--------------------------\n" +
+                      "6 - Add User\n" +
+                      "7 - Delete User\n";
+
 
 User userObj = UserAuthentication();
 Role roleObj = new Role();
+
 string userInput = ""; 
 do
 {
@@ -40,11 +45,21 @@ do
         case (int)MenuOption.CloseIncident:
             CloseIncident(incidentList);
             break;
-
+        
+        case (int)MenuOption.Escalate:
+            EscalateIncident(incidentList);
+            break;
+        
+        case (int)MenuOption.AddUser:
+            AddUser(roleObj);
+            break;
+        case (int)MenuOption.DeleteUser:
+            ShowUsers();
+            DeleteUser(1);
+            break;
         case (int)MenuOption.Exit:
             Environment.Exit(0);
             break;
-
         default:
             Console.WriteLine("Invalid choice. Please select a valid option.");
             break;
@@ -52,29 +67,8 @@ do
 
 } while (Convert.ToInt32(userInput) != 5);
 
-do
-{
-    
-    List<User> userList = User.FetchUser();
-    
-    switch (Convert.ToInt32(userInput) - 1)
-    {
-        case (int)MenuOptionUser.AddUser:
-            AddUser(roleObj);
-            break;
-        case (int)MenuOptionUser.DeleteUser:
-            ShowAllUser(userList);
-            //DeleteUser();
-            break;
-        case (int)MenuOptionUser.Exit:
-            Environment.Exit(0);
-            break;
-        default:
-            Console.WriteLine("Invalid choice. Please select a valid option.");
-            break;
-    }
-} while (Convert.ToInt32(userInput) != 2);
 
+// Menu: Incident functions
 static void ShowIncidents(List<Incident> incidentList)
 {
     foreach (var incident in incidentList)
@@ -108,107 +102,51 @@ static void AddIncident(User userObj)
     Console.WriteLine("Incident added successfully!\nPress any key to continue...");
     Console.ReadKey();
 }
-static void SendMail()
-{
-    //TODO Absender erfassen
-    int receiver = Convert.ToInt16(GetInput(("Please enter the UserID of the Receiver: ")));
-    INotification mailNotification = new MailNotification();
-    //mailNotification.Sender = 1;
-    mailNotification.Receiver = receiver;
-    mailNotification.Notify();
-}
-
 
 static void EditIncident(List<Incident> incidentList)
 {
-    if (incidentList.Count > 0)
+    Incident? incidentToEdit = SelectExistingIncident(incidentList);
+    if (incidentToEdit != null)
     {
-        Incident? incidentToEdit = null; 
-        while (incidentToEdit == null)
-        {
-            foreach (var incident in incidentList)
-            {
-                Console.WriteLine(incident.IncidentId + " – " + incident.Description);
-            }
-
-            string incidentId = GetInput("Enter the ID of the incident you want to edit: ");
-                    
-            if (int.TryParse(incidentId, out int parsedId))
-            {
-                incidentToEdit = Incident.GetIncident(parsedId);
-                if (incidentToEdit != null)
-                {
-                    incidentToEdit.Status = GetStatusInput($"Status (default = {incidentToEdit.Status.ToString()}):", true);
-                    incidentToEdit.Severity = GetSeverityInput($"Severity (default = {incidentToEdit.Severity.ToString()}): ", true);
-                    incidentToEdit.Cve = GetInput($"CVE (default = {incidentToEdit.Cve}): ", true);
-                    incidentToEdit.Description = GetInput($"Description (default = {incidentToEdit.Description}): ", true);
+        incidentToEdit.Status = GetStatusInput($"Status (default = {incidentToEdit.Status.ToString()}):", true);
+        incidentToEdit.Severity = GetSeverityInput($"Severity (default = {incidentToEdit.Severity.ToString()}): ", true);
+        incidentToEdit.Cve = GetInput($"CVE (default = {incidentToEdit.Cve}): ", true);
+        incidentToEdit.Description = GetInput($"Description (default = {incidentToEdit.Description}): ", true);
                             
-                    Incident.UpdateIncident(incidentToEdit);  
-                    Console.WriteLine($"Incident ID {incidentToEdit.IncidentId} edited successfully!\nPress any key to continue...");
-                    Console.ReadKey();
-                }
-                        
-                else
-                {
-                    Console.WriteLine("No incident found with the given ID!");
-                }
-            }
-            else
-            {
-                Console.WriteLine("Invalid ID! Please enter a valid incident ID.");
-            }
-        }
-    }
-    else
-    {
-        Console.WriteLine("No incidents found!");
+        Incident.UpdateIncident(incidentToEdit);  
+        Console.WriteLine($"Incident ID {incidentToEdit.IncidentId} edited successfully!\nPress any key to continue...");
+        Console.ReadKey();
     }
 }
 
 static void CloseIncident(List<Incident> incidentList)
 {
-    if (incidentList.Count > 0)
+    Incident? incidentToEdit = SelectExistingIncident(incidentList);
+    if (incidentToEdit != null)
     {
-        Incident? incidentToEdit = null; 
-        while (incidentToEdit == null)
-        {
-            foreach (var incident in incidentList)
-            {
-                Console.WriteLine(incident.IncidentId + " – " + incident.Description);
-            }
-
-            string incidentId = GetInput("Enter the ID of the incident you want to close: ");
-                    
-            if (int.TryParse(incidentId, out int parsedId))
-            {
-                incidentToEdit = Incident.GetIncident(parsedId);
-                if (incidentToEdit != null)
-                {
-                    incidentToEdit.Status = Status.Closed;
-                    Incident.UpdateIncident(incidentToEdit);     
-                    Console.WriteLine($"Incident ID {incidentToEdit.IncidentId} closed successfully!\nPress any key to continue...");
-                    Console.ReadKey();
-                }
-                        
-                else
-                {
-                    Console.WriteLine("No incident found with the given ID!");
-                }
-                        
-            }
-            else
-            {
-                Console.WriteLine("Invalid ID! Please enter a valid incident ID.");
-            }
-        }
-    }
-    else
-    {
-        Console.WriteLine("No incidents found!");
+        incidentToEdit.Status = Status.Closed;
+        Incident.UpdateIncident(incidentToEdit);     
+        Console.WriteLine($"Incident ID {incidentToEdit.IncidentId} closed successfully!\nPress any key to continue...");
+        Console.ReadKey();
     }
 }
 
-static void AddUser(Role roleobj)
+static void EscalateIncident(List<Incident> incidentList)
+{
+    if (SelectExistingIncident(incidentList) != null)
+    {
+        Console.WriteLine("Incident escalated successfully!\nPress any key to continue...");
+    }
+    
+    // use the SelectExistingIncident and check if the return type is not null
+    if(SelectExistingIncident(incidentList) != null)
+    {
+        SendMail();
+    }
+}
+
+// Menu: User functions
+static void AddUser(Role roleObj)
 {
     Console.Clear();
     string userName = GetInput("Enter your Username: ");
@@ -217,7 +155,7 @@ static void AddUser(Role roleobj)
     
     User newUserObj = new User(
         userName,
-        roleobj.roleID,
+        roleObj.roleID,
         phoneNumber,
         email
         );
@@ -227,18 +165,73 @@ static void AddUser(Role roleobj)
     Console.ReadKey();
 }
 
-static void ShowAllUser(List<User> userList)
+static void ShowUsers()
 {
-    foreach (var user in userList)
+    List<User> userList = User.FetchAllUser();
+    foreach (var property in userList)
     {
-        Console.WriteLine(user.ToString());
+        Console.WriteLine(property.ToString());
     }
-    
+
 }
 
 static void DeleteUser(int userId)
 {
     User.DeleteUser(userId);
+}
+
+
+// Helper functions
+static Incident? SelectExistingIncident(List<Incident> incidentList)
+{
+    if (incidentList.Count == 0)
+    {
+        Console.WriteLine("No incidents found!");
+        return null;
+    }
+
+    while (true)
+    {
+        foreach (var incident in incidentList)
+        {
+            Console.WriteLine(incident.IncidentId + " – " + incident.Description);
+        }
+
+        string incidentId = GetInput("Enter the ID of the incident (or 'exit' to quit): ");
+        
+        if (incidentId.ToLower() == "exit")
+        {
+            return null;
+        }
+
+        if (int.TryParse(incidentId, out int parsedId))
+        {
+            var incidentToEdit = Incident.GetIncident(parsedId);
+            if (incidentToEdit != null)
+            {
+                return incidentToEdit;
+            }
+            else
+            {
+                Console.Clear();
+                Console.WriteLine($"No incident found with ID: {parsedId}. Try again.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Invalid ID format. Try again.");
+        }
+    }
+}
+
+static void SendMail()
+{
+    // dummy mail notification for now
+    int receiver = Convert.ToInt16(GetInput(("Please enter the UserID of the Receiver: ")));
+    INotification mailNotification = new MailNotification();
+    //mailNotification.Sender = 1;
+    mailNotification.Receiver = receiver;
+    mailNotification.Notify();
 }
 
 static User UserAuthentication()
@@ -311,5 +304,3 @@ static Status GetStatusInput(string prompt, bool defaultAllowed = false)
 
     } while (true);
 }
-
-

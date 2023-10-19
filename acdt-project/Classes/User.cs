@@ -47,7 +47,7 @@ public class User
         }
     }
     
-    public static List<User> FetchUser()
+    public static List<User> FetchAllUser()
     {
         using (var context = new IncidentContext())
         {

@@ -12,7 +12,6 @@ string defaultText = "Options:\n" +
 
 User userObj = UserAuthentication();
 Role roleObj = new Role();
-
 string userInput = ""; 
 do
 {
@@ -109,6 +108,16 @@ static void AddIncident(User userObj)
     Console.WriteLine("Incident added successfully!\nPress any key to continue...");
     Console.ReadKey();
 }
+static void SendMail()
+{
+    //TODO Absender erfassen
+    int receiver = Convert.ToInt16(GetInput(("Please enter the UserID of the Receiver: ")));
+    INotification mailNotification = new MailNotification();
+    //mailNotification.Sender = 1;
+    mailNotification.Receiver = receiver;
+    mailNotification.Notify();
+}
+
 
 static void EditIncident(List<Incident> incidentList)
 {

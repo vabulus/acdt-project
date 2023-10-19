@@ -11,7 +11,7 @@ public class MailNotification : INotification
     
     public void Notify()
     {
-       using (var dbContext = new UserContext())
+       using (var dbContext = new IncidentContext())
        {
            var user = dbContext.Users.FirstOrDefault(u => u.UserId == Receiver);
 

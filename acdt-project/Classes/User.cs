@@ -32,7 +32,7 @@ public class User
 
     public static void AddUser(User userObj)
     {
-        using (var context = new UserContext())
+        using (var context = new IncidentContext())
         {
             context.Users.Add(userObj);
             context.SaveChanges();
@@ -41,7 +41,7 @@ public class User
 
     public static User GetUser(int userId)
     {
-        using (var context = new UserContext())
+        using (var context = new IncidentContext())
         { 
             return context.Users.SingleOrDefault(i => i.UserId == userId);
         }
@@ -49,7 +49,7 @@ public class User
     
     public static List<User> FetchUser()
     {
-        using (var context = new UserContext())
+        using (var context = new IncidentContext())
         {
             var user = context.Users.ToListAsync().Result;
             return user;
@@ -58,7 +58,7 @@ public class User
 
     public static void DeleteUser(int userId)
     {
-        using (var context = new UserContext())
+        using (var context = new IncidentContext())
         {
             var user = context.Users.Single(u => u.UserId == userId);
             context.Users.Remove(user);

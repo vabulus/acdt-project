@@ -1,9 +1,31 @@
-CREATE TRIGGER LogInsertsAndUpdates
-    ON Log
-    AFTER INSERT, UPDATE
-                      AS
+CREATE TRIGGER IncidentsLogInserts
+    AFTER INSERT ON Incidents
+    FOR EACH ROW
 BEGIN
-    DECLARE @id int;
-    SELECT @id = i.CustomerID FROM inserted i;
-    INSERT INTO Log (createdAt, Loglevel, Message) VALUES (current_timestamp, 1, @id);
-END
+    INSERT INTO Log (createdAt, Loglevel, Message)
+    VALUES (CURRENT_TIMESTAMP, 1, CONCAT('Insert operation detected in Incidents with ID: ', NEW.IncidentId));
+END;
+
+CREATE TRIGGER UsersLogInserts
+    AFTER INSERT ON Users
+    FOR EACH ROW
+BEGIN
+    INSERT INTO Log (createdAt, Loglevel, Message)
+    VALUES (CURRENT_TIMESTAMP, 1, CONCAT('Insert operation detected in Users with ID: ', NEW.UserId));
+END;
+
+CREATE TRIGGER UsersLogUpdates
+    AFTER UPDATE ON Users
+    FOR EACH ROW
+BEGIN
+    INSERT INTO Log (createdAt, Loglevel, Message)
+    VALUES (CURRENT_TIMESTAMP, 1, CONCAT('Update operation detected in Users with ID: ', NEW.UserId));
+END;
+
+CREATE TRIGGER IncidentsLogUpdates
+    AFTER UPDATE ON Incidents
+    FOR EACH ROW
+BEGIN
+    INSERT INTO Log (createdAt, Loglevel, Message)
+    VALUES (CURRENT_TIMESTAMP, 1, CONCAT('Update operation detected in Incident with ID: ', NEW.IncidentId));
+END;

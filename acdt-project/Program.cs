@@ -55,13 +55,17 @@ do
 
 do
 {
+    
+    List<User> userList = User.FetchUser();
+    
     switch (Convert.ToInt32(userInput) - 1)
     {
         case (int)MenuOptionUser.AddUser:
             AddUser(roleObj);
             break;
         case (int)MenuOptionUser.DeleteUser:
-            DeleteUser();
+            ShowAllUser(userList);
+            //DeleteUser();
             break;
         case (int)MenuOptionUser.Exit:
             Environment.Exit(0);
@@ -214,9 +218,18 @@ static void AddUser(Role roleobj)
     Console.ReadKey();
 }
 
-static void DeleteUser()
+static void ShowAllUser(List<User> userList)
 {
+    foreach (var user in userList)
+    {
+        Console.WriteLine(user.ToString());
+    }
     
+}
+
+static void DeleteUser(int userId)
+{
+    User.DeleteUser(userId);
 }
 
 static User UserAuthentication()

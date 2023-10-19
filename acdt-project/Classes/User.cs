@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using acdt_project.Database;
+using Microsoft.EntityFrameworkCore;
 
 namespace acdt_project.Classes;
 
@@ -45,9 +46,23 @@ public class User
             return context.Users.SingleOrDefault(i => i.UserId == userId);
         }
     }
-
-    public void DeleteUser()
+    
+    public static List<User> FetchUser()
     {
-        throw new NotImplementedException();
+        using (var context = new UserContext())
+        {
+            var user = context.Users.ToListAsync().Result;
+            return user;
+        }  
+    }
+
+    public static void DeleteUser(int userId)
+    {
+        using (var context = new UserContext())
+        {
+            var user = context.Users.Single(u => u.UserId == userId);
+            context.Users.Remove(user);
+            context.SaveChanges();
+        }
     }
 }

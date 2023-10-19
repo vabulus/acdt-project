@@ -1,16 +1,26 @@
 ﻿services:
   mariadb:
     image: mariadb:latest
-    container_name: acdt-mariadb
+    container_name: mariadb
     environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: incidents
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: acdt-database
       MYSQL_USER: incident-user
       MYSQL_PASSWORD: password
     ports:
       - "3306:3306"
-#  acdt-project:
-#    image: acdt-project
+#    networks:
+#      - acdt-network
+#  acdt-project-app:
+#    image: acdt-project-app
+#    container_name: acdt-project-app
 #    build:
 #      context: .
 #      dockerfile: acdt-project/Dockerfile
+#    depends_on:
+#      - mariadb
+#    networks:
+#      - acdt-network
+#networks:
+#  acdt-network:
+#    driver: bridge

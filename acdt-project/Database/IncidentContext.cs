@@ -11,10 +11,11 @@ namespace acdt_project.Database
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var connectionString = "Server=localhost,1433;Database=incidents;User=root;Password=password;";
+            var connectionString = "Server=localhost,port=3306;Database=acdt-database;User=incident-user;Password=password;";
             var serverVersion = new MySqlServerVersion(new Version(8, 0, 29));
 
-            optionsBuilder.UseMySql(connectionString, serverVersion)
+            optionsBuilder.UseMySql(connectionString, serverVersion, builder => 
+                    builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null))
                 .EnableSensitiveDataLogging()
                 .EnableDetailedErrors();
         }

@@ -11,7 +11,9 @@ string defaultText = "Options:\n" +
                       "5 – Escalate\n" +
                       "--------------------------\n" +
                       "6 - Add User\n" +
-                      "7 - Delete User\n";
+                      "7 - Delete User\n"+
+                      "8 - Message User\n"
+                      ;
 
 
 User userObj = UserAuthentication();
@@ -141,7 +143,7 @@ static void EscalateIncident(List<Incident> incidentList)
     // use the SelectExistingIncident and check if the return type is not null
     if(SelectExistingIncident(incidentList) != null)
     {
-        SendMail();
+        SendNotification();
     }
 }
 
@@ -224,14 +226,44 @@ static Incident? SelectExistingIncident(List<Incident> incidentList)
     }
 }
 
-static void SendMail()
+static void SendNotification()
 {
-    // dummy mail notification for now
-    int receiver = Convert.ToInt16(GetInput(("Please enter the UserID of the Receiver: ")));
-    INotification mailNotification = new MailNotification();
-    //mailNotification.Sender = 1;
-    mailNotification.Receiver = receiver;
-    mailNotification.Notify();
+    string receiver_name = GetInput(("Please enter the name of the receiver: "));
+    User recipient = User.GetUser(receiver_name);
+    
+
+    string defaultText = "What messaging channel would you like to use?:\n" +
+                         "1 – Email\n" +
+                         "2 – Signal\n" +
+                         "3 – SMS\n" +
+                         "4 – Exit\n";
+    
+    Console.WriteLine(defaultText);
+    Console.Write("Enter your choice: ");
+    string userInput = Console.ReadLine() ?? "";
+
+    switch (Convert.ToInt16(userInput))
+    {
+        case 1:
+            INotification mailNotification = new MailNotification();
+            mailNotification.Receiver = recipient.UserId;
+            mailNotification.Notify();
+            break;
+        case 2:
+            INotification signalNotification = new SignalNotification();
+            signalNotification.Receiver = recipient.UserId;
+            signalNotification.Notify();
+            break;
+        case 3:
+            INotification smsNotification = new SmsNotification();
+            smsNotification.Receiver = recipient.UserId;
+            smsNotification.Notify();
+            break;
+
+    }
+
+
+
 }
 
 static User UserAuthentication()

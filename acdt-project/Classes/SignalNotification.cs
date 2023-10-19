@@ -1,15 +1,27 @@
+using acdt_project.Database;
+
 namespace acdt_project.Classes;
 
-public class SignalNotification :INotification
+public class SignalNotification : INotification
 {
-    public string SignalUsername { get; set; }
-
-    public int NotificationId { get; set; }
+    public string phoneNumber { get; set; }
     public int Sender { get; set; }
     public int Receiver { get; set; }
 
     public void Notify()
     {
-        Console.WriteLine("Notification send to " + Receiver + "from " + Sender + " via Signal");
+        using (var dbContext = new IncidentContext())
+        {
+            var user = dbContext.Users.FirstOrDefault(u => u.UserId == Receiver);
+
+            if (user != null)
+            {
+                Console.WriteLine($"Mail Message sent to {user.Username} via {user.PhoneNumber} and Signal ");
+            }
+            else
+            {
+                Console.WriteLine("User not found");
+            }
+        }
     }
 }

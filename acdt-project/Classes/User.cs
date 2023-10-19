@@ -13,6 +13,10 @@ public class User
     public string PhoneNumber { get; set; }
     public string EMail { get; set; }
 
+    public User()
+    {
+        
+    }
     public User(string username, int roleId, string phoneNumber, string eMail, int userId)
     {
         Username = username;
@@ -39,11 +43,11 @@ public class User
         }
     }
 
-    public static User GetUser(int userId)
+    public static User GetUser(string username)
     {
         using (var context = new IncidentContext())
         { 
-            return context.Users.SingleOrDefault(i => i.UserId == userId);
+            return context.Users.SingleOrDefault(i => i.Username == username);
         }
     }
     

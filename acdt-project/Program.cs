@@ -1,100 +1,124 @@
 ﻿using System.Xml;
 using acdt_project.Classes;
 using acdt_project.Enums;
+using Spectre.Console;
 
 
-string defaultText = "Options:\n" +
-                      "1 – Show Incidents\n" +
-                      "2 – Add Incident\n" +
-                      "3 – Edit Incident\n" +
-                      "4 – Close Incident\n" +
-                      "5 – Escalate\n" +
-                      "--------------------------\n" +
-                      "6 - List Users\n" +
-                      "7 - Add User\n" +
-                      "8 - Delete User\n" +
-                      "9 - Message User\n" +
-                      "10 – Exit\n";
+string[] severityArray = Enum.GetNames(typeof(Severity));
+string[] statusArray = Enum.GetNames(typeof(IncidentStatus));
 
 
 User userObj = UserAuthentication();
 Role roleObj = new Role();
 
-string userInput = ""; 
 do
 {
-    Console.Clear();
-    Console.WriteLine(defaultText);
-    Console.Write("Enter your choice: ");
-    userInput = Console.ReadLine() ?? "";
     
-    // we are not lazy loading, because for almost any operation we need the user object. this position is optimal, cuz user has to think about his next actions
     List<Incident> incidentList = Incident.FetchIncidents();
+    Console.Clear();
     
-    switch (Convert.ToInt32(userInput) - 1)
+    var choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
+        .Title("Options")
+        .PageSize(10)
+        .MoreChoicesText("[grey](Use Up/Down to view more options)[/]")
+        .AddChoices(new[]
+        {
+            "Show Incidents",
+            "Add Incident",
+            "Edit Incident",
+            "Close Incident",
+            "Escalate",
+            "List Users",
+            "Add User",
+            "Delete User",
+            "Message User",
+            "Exit"
+        }));
+    
+    switch (choice)
     {
-        case (int)MenuOption.ShowIncidents:
+        case "Show Incidents":
             ShowIncidents(incidentList);
             break;
-        case (int)MenuOption.AddIncident:
+        case "Add Incident":
             AddIncident(userObj);
             break;
-        case (int)MenuOption.EditIncident:
+        case "Edit Incident":
             EditIncident(incidentList);
             break;
-        case (int)MenuOption.CloseIncident:
+        case "Close Incident":
             CloseIncident(incidentList);
             break;
-        case (int)MenuOption.Escalate:
+        case "Escalate":
             EscalateIncident(incidentList);
             break;
-        case (int)MenuOption.ShowUsers:
+        case "List Users":
             ShowUsers();
             break;
-        case (int)MenuOption.AddUser:
+        case "Add User":
             AddUser(roleObj);
             break;
-        case (int)MenuOption.DeleteUser:
+        case "Delete User":
             ShowUsers();
             DeleteUser(1);
-            break;        
-        case (int)MenuOption.MessageUser:
+            break;
+        case "Message User":
             SendNotification();
             break;
-        case (int)MenuOption.Exit:
+        case "Exit":
             Environment.Exit(0);
             break;
-        default:
-            Console.WriteLine("Invalid choice. Please select a valid option.");
-            break;
     }
-
-} while (Convert.ToInt32(userInput) != 5);
+} while (true);
 
 
 // Menu: Incident functions
 static void ShowIncidents(List<Incident> incidentList)
 {
+    var table = new Table();
+    table.AddColumn("ID");
+    table.AddColumn("Severity");
+    table.AddColumn("CVE");
+    table.AddColumn("System");
+    table.AddColumn("Description");
+
     foreach (var incident in incidentList)
     {
-        Console.WriteLine(incident.ToString());
+        table.AddRow(
+            incident.IncidentId.ToString(),
+            incident.Severity.ToString(),
+            incident.Cve,
+            incident.System,
+            incident.Description
+        );
     }
-    Console.WriteLine("Press any key to continue...");
+
+    AnsiConsole.Write(table);
+    AnsiConsole.WriteLine();
+    AnsiConsole.Markup("[bold]Press any key to continue...[/]");
     Console.ReadKey();
 }
 
 static void AddIncident(User userObj)
 {
     Console.Clear();
-    
     Severity severityUser = GetSeverityInput("Enter the severity of the incident (1-4, default = 1): ");
+    
+    // var favorites = AnsiConsole.Prompt(
+    //     new SelectionPrompt<string>()
+    //         .PageSize(10)
+    //         .Title("What is the status of the incident?")
+    //         .MoreChoicesText("[grey](Move up and down to reveal more fruits)[/]")
+    //         .AddChoices(statusArray));
+    
+    
     string cve = GetInput("Enter the CVE of the incident: ");
     string system = GetInput("Enter the system of the incident: ");
     string description = GetInput("Enter the description of the incident: ");
             
     Incident incidentObj = new Incident(
         severityUser,
-        Status.Open,
+        IncidentStatus.Open,
         cve,
         DateTime.Now,
         userObj.UserId,
@@ -128,7 +152,7 @@ static void CloseIncident(List<Incident> incidentList)
     Incident? incidentToEdit = SelectExistingIncident(incidentList);
     if (incidentToEdit != null)
     {
-        incidentToEdit.Status = Status.Closed;
+        incidentToEdit.Status = IncidentStatus.Closed;
         Incident.UpdateIncident(incidentToEdit);     
         Console.WriteLine($"Incident ID {incidentToEdit.IncidentId} closed successfully!\nPress any key to continue...");
         Console.ReadKey();
@@ -172,11 +196,24 @@ static void AddUser(Role roleObj)
 static void ShowUsers()
 {
     List<User> userList = User.FetchAllUser();
-    foreach (var property in userList)
-    {
-        Console.WriteLine(property.ToString());
-    }
 
+    var table = new Table();
+    table.AddColumn("Username");
+    table.AddColumn("Phone number");
+    table.AddColumn("Email");
+
+    foreach (var user in userList)
+    {
+        table.AddRow(
+            user.Username,
+            user.PhoneNumber,
+            user.EMail
+        );
+    }
+    AnsiConsole.Write(table);
+    AnsiConsole.WriteLine();
+    AnsiConsole.Markup("[bold]Press any key to continue...[/]");
+    Console.ReadKey();
 }
 
 static void DeleteUser(int userId)
@@ -265,13 +302,13 @@ static Incident? SelectExistingIncident(List<Incident> incidentList)
 
 static User UserAuthentication()
 {
-    // dummy user authentication
-    Console.WriteLine("Welcome to the ACDT Incident Management System");
-    Console.Write("Please enter your username: ");
-    string username = Console.ReadLine() ?? "";
-    Console.Write("Please enter your password: ");
-    string password = Console.ReadLine() ?? "";
-    
+    // // dummy user authentication
+    // Console.WriteLine("Welcome to the ACDT Incident Management System");
+    // Console.Write("Please enter your username: ");
+    // string username = Console.ReadLine() ?? "";
+    // Console.Write("Please enter your password: ");
+    // string password = Console.ReadLine() ?? "";
+    //
     // now we get the user from the database, however we just use a dummy user for now
     User user = new User("admin", 1, "123456789", "test@fkasdf.com", 1);
 
@@ -307,17 +344,18 @@ static string GetInput(string prompt, bool defaultAllowed = false)
     string input;
     do
     {
-        Console.Write(prompt);
+        AnsiConsole.Markup(prompt);
         input = Console.ReadLine() ?? "";
-    } while (!defaultAllowed && string.IsNullOrEmpty(input)); 
+    } while (!defaultAllowed && string.IsNullOrEmpty(input));
 
     return input;
 }
 
-static Status GetStatusInput(string prompt, bool defaultAllowed = false)
+
+static IncidentStatus GetStatusInput(string prompt, bool defaultAllowed = false)
 {
     string input;
-    Status result;
+    IncidentStatus result;
     do
     {
         Console.Write(prompt);
@@ -326,7 +364,7 @@ static Status GetStatusInput(string prompt, bool defaultAllowed = false)
         if (defaultAllowed && string.IsNullOrEmpty(input))
             return default;
 
-        if (Enum.TryParse<Status>(input, true, out result))
+        if (Enum.TryParse<IncidentStatus>(input, true, out result))
             return result;
 
         Console.WriteLine("Invalid status. Please enter again.");

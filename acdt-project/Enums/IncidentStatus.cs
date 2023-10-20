@@ -1,6 +1,6 @@
 namespace acdt_project.Enums;
 
-public enum Status
+public enum IncidentStatus
 {
     Open,
     Processing,

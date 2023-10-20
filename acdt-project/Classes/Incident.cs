@@ -15,7 +15,7 @@ public class Incident
     {
         return $"IncidentId: {IncidentId}\n" +
                $"Severity: {Severity}\n" +
-               $"Status: {Status}\n" +
+               $"IncidentStatus: {Status}\n" +
                $"Cve: {Cve}\n" +
                $"CreatedAt: {CreatedAt}\n" +
                $"Issuer: {Issuer}\n" +
@@ -25,7 +25,7 @@ public class Incident
 
     
     // make a constructor
-    public Incident(Severity severity, Status status, string cve, DateTime createdAt, int issuer, string system, string description)
+    public Incident(Severity severity, IncidentStatus status, string cve, DateTime createdAt, int issuer, string system, string description)
     {
         Severity = severity;
         Status = status;
@@ -40,7 +40,7 @@ public class Incident
     public int IncidentId { get; set; }
     
     public Severity Severity { get; set; }
-    public Status Status { get; set; }
+    public IncidentStatus Status { get; set; }
     
     public string Cve { get; set; }
     public DateTime CreatedAt { get; set; }

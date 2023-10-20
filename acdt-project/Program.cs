@@ -154,7 +154,7 @@ static void CloseIncident(List<Incident> incidentList)
     {
         incidentToEdit.Status = IncidentStatus.Closed;
         Incident.UpdateIncident(incidentToEdit);     
-        Console.WriteLine($"Incident ID {incidentToEdit.IncidentId} closed successfully!\nPress any key to continue...");
+        AnsiConsole.WriteLine($"Incident ID {incidentToEdit.IncidentId} closed successfully!\nPress any key to continue...");
         Console.ReadKey();
     }
 }
@@ -163,7 +163,7 @@ static void EscalateIncident(List<Incident> incidentList)
 {
     if (SelectExistingIncident(incidentList) != null)
     {
-        Console.WriteLine("Incident escalated successfully!\nPress any key to continue...");
+        AnsiConsole.WriteLine("Incident escalated successfully!\nPress any key to continue...");
     }
     
     // use the SelectExistingIncident and check if the return type is not null
@@ -189,7 +189,7 @@ static void AddUser(Role roleObj)
         );
             
     User.AddUser(newUserObj);
-    Console.WriteLine("User added successfully!\nPress any key to continue...");
+    AnsiConsole.WriteLine("User added successfully!\nPress any key to continue...");
     Console.ReadKey();
 }
 

@@ -29,10 +29,7 @@ do
             "Edit Incident",
             "Close Incident",
             "Escalate",
-            "List Users",
-            "Add User",
-            "Delete User",
-            "Message User",
+            "Manage Users",
             "Exit"
         }));
     
@@ -53,18 +50,8 @@ do
         case "Escalate":
             EscalateIncident(incidentList);
             break;
-        case "List Users":
-            ShowUsers();
-            break;
-        case "Add User":
-            AddUser(roleObj);
-            break;
-        case "Delete User":
-            ShowUsers();
-            DeleteUser(1);
-            break;
-        case "Message User":
-            Messaging();
+        case "Manage Users":
+            ManageUsers();
             break;
         case "Exit":
             Environment.Exit(0);
@@ -147,6 +134,41 @@ static void EditIncident(List<Incident> incidentList)
         Incident.UpdateIncident(incidentToEdit);  
         Console.WriteLine($"Incident ID {incidentToEdit.IncidentId} edited successfully!\nPress any key to continue...");
         Console.ReadKey();
+    }
+}
+
+static void ManageUsers()
+{
+    var choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
+        .Title("What would you like to do")
+        .PageSize(10)
+        .MoreChoicesText("[grey](Use Up/Down to view more options)[/]")
+        .AddChoices(new[]
+        {
+            "List Users",
+            "Add User",
+            "Delete User",
+            "Messaging",
+            "Exit"
+        }));
+    switch (choice)
+    {
+        case "List Users":
+            ShowUsers();
+            break;
+        case "Add User":
+            Role roleObj = new Role();
+            AddUser(roleObj);
+            break;
+        case "Delete User":
+            DeleteUser();
+            break;
+        case "Messaging":
+            Messaging();
+            break;
+        case "Exit":
+            Environment.Exit(0);
+            break;
     }
 }
 
@@ -267,9 +289,12 @@ static void ShowUsers()
     Console.ReadKey();
 }
 
-static void DeleteUser(int userId)
+static void DeleteUser()
 {
-    User.DeleteUser(userId);
+    ShowUsers();
+    string username = GetInput("Enter the name of the user to delete: ");
+    User userToDelete = User.GetUser(username);
+    User.DeleteUser(userToDelete.UserId);
 }
 
 static void Messaging()

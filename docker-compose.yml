@@ -1,0 +1,12 @@
+﻿version: '3'
+services:
+  acdt-mariadb:
+    image: mariadb:latest
+    container_name: acdt-mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: acdtDatabase
+      MYSQL_USER: incident-user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"

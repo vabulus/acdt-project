@@ -8,14 +8,21 @@ namespace acdt_project.Database
     {
         public DbSet<Incident> Incidents { get; set; }
         public DbSet<User> Users { get; set; }
-
+        
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var connectionString = "Server=localhost,port=3306;Database=acdt-database;User=incident-user;Password=password;";
+            var connectionString = "Server=acdt-mariadb;Port=3306;Database=acdtDatabase;User=root;Password=root;";
             var serverVersion = new MySqlServerVersion(new Version(8, 0, 29));
 
-            optionsBuilder.UseMySql(connectionString, serverVersion, builder => 
-                    builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null))
+            optionsBuilder.UseMySql(connectionString, serverVersion, builder =>
+                {
+                    // Configure retry behavior here
+                    builder.EnableRetryOnFailure(
+                        maxRetryCount: 5,               // Number of retries
+                        maxRetryDelay: TimeSpan.FromSeconds(10), // Delay between retries
+                        errorNumbersToAdd: null         // SQL error codes to consider transient
+                    );
+                })
                 .EnableSensitiveDataLogging()
                 .EnableDetailedErrors();
         }

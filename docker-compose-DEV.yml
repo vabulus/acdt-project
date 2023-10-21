@@ -1,0 +1,33 @@
+﻿version: '3'
+services:
+  acdt-mariadb:
+    image: mariadb:latest
+    container_name: acdt-mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: acdtDatabase
+      MYSQL_USER: incident-user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./01-use-database.sql:/docker-entrypoint-initdb.d/01-use-database.sql
+      - ./02-create-tables.sql:/docker-entrypoint-initdb.d/02-create-tables.sql
+      - ./03-create-triggers.sql:/docker-entrypoint-initdb.d/03-create-triggers.sql
+    networks:
+      - acdt-network  # Connect to the custom network
+
+  acdt-project-app:
+    image: acdt-project-app
+    container_name: acdt-project-app
+    build:
+      context: .
+      dockerfile: acdt-project/Dockerfile
+    depends_on:
+      - acdt-mariadb
+    networks:
+      - acdt-network  # Connect to the custom network
+
+networks:
+  acdt-network:
+    driver: bridge

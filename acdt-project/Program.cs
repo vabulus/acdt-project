@@ -154,7 +154,7 @@ static void CloseIncident(List<Incident> incidentList)
     {
         incidentToEdit.Status = IncidentStatus.Closed;
         Incident.UpdateIncident(incidentToEdit);     
-        Console.WriteLine($"Incident ID {incidentToEdit.IncidentId} closed successfully!\nPress any key to continue...");
+        AnsiConsole.WriteLine($"Incident ID {incidentToEdit.IncidentId} closed successfully!\nPress any key to continue...");
         Console.ReadKey();
     }
 }
@@ -163,7 +163,7 @@ static void EscalateIncident(List<Incident> incidentList)
 {
     if (SelectExistingIncident(incidentList) != null)
     {
-        Console.WriteLine("Incident escalated successfully!\nPress any key to continue...");
+        AnsiConsole.WriteLine("Incident escalated successfully!\nPress any key to continue...");
     }
     
     // use the SelectExistingIncident and check if the return type is not null
@@ -189,7 +189,7 @@ static void AddUser(Role roleObj)
         );
             
     User.AddUser(newUserObj);
-    Console.WriteLine("User added successfully!\nPress any key to continue...");
+    AnsiConsole.WriteLine("User added successfully!\nPress any key to continue...");
     Console.ReadKey();
 }
 
@@ -227,32 +227,69 @@ static void SendNotification()
     User recipient = User.GetUser(receiverName);
     
 
-    string defaultText = "What messaging channel would you like to use?:\n" +
-                         "1 – Email\n" +
-                         "2 – Signal\n" +
-                         "3 – SMS\n" +
-                         "4 – Exit\n";
+    // string defaultText = "What messaging channel would you like to use?:\n" +
+    //                      "1 – Email\n" +
+    //                      "2 – Signal\n" +
+    //                      "3 – SMS\n" +
+    //                      "4 – Exit\n";
+    //
+    // Console.WriteLine(defaultText);
+    // Console.Write("Enter your choice: ");
+    // string userInput = Console.ReadLine() ?? "";
+    //
+    // switch (Convert.ToInt16(userInput))
+    // {
+    //     case 1:
+    //         INotification mailNotification = new MailNotification();
+    //         mailNotification.Receiver = recipient.UserId;
+    //         mailNotification.Notify();
+    //         break;
+    //     case 2:
+    //         INotification signalNotification = new SignalNotification();
+    //         signalNotification.Receiver = recipient.UserId;
+    //         signalNotification.Notify();
+    //         break;
+    //     case 3:
+    //         INotification smsNotification = new SmsNotification();
+    //         smsNotification.Receiver = recipient.UserId;
+    //         smsNotification.Notify();
+    //         break;
+    // }
+    //
+    // List<Incident> incidentList = Incident.FetchIncidents();
+    // Console.Clear();
     
-    Console.WriteLine(defaultText);
-    Console.Write("Enter your choice: ");
-    string userInput = Console.ReadLine() ?? "";
-
-    switch (Convert.ToInt16(userInput))
+    var choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
+        .Title("What messaging channel would you like to use?:")
+        .PageSize(10)
+        .MoreChoicesText("[grey](Use Up/Down to view more options)[/]")
+        .AddChoices(new[]
+        {
+            "Email",
+            "Signal",
+            "SMS",
+            "Exit"
+        }));
+    
+    switch (choice)
     {
-        case 1:
+        case "Email":
             INotification mailNotification = new MailNotification();
             mailNotification.Receiver = recipient.UserId;
             mailNotification.Notify();
             break;
-        case 2:
+        case "Signal":
             INotification signalNotification = new SignalNotification();
             signalNotification.Receiver = recipient.UserId;
             signalNotification.Notify();
             break;
-        case 3:
+        case "SMS":
             INotification smsNotification = new SmsNotification();
             smsNotification.Receiver = recipient.UserId;
             smsNotification.Notify();
+            break;
+        case "Exit":
+            Environment.Exit(0);
             break;
     }
 }
@@ -262,7 +299,7 @@ static Incident? SelectExistingIncident(List<Incident> incidentList)
 {
     if (incidentList.Count == 0)
     {
-        Console.WriteLine("No incidents found!");
+        AnsiConsole.WriteLine("No incidents found!");
         return null;
     }
 
@@ -270,7 +307,7 @@ static Incident? SelectExistingIncident(List<Incident> incidentList)
     {
         foreach (var incident in incidentList)
         {
-            Console.WriteLine(incident.IncidentId + " – " + incident.Description);
+            AnsiConsole.WriteLine(incident.IncidentId + " – " + incident.Description);
         }
 
         string incidentId = GetInput("Enter the ID of the incident (or 'exit' to quit): ");
@@ -289,13 +326,13 @@ static Incident? SelectExistingIncident(List<Incident> incidentList)
             }
             else
             {
-                Console.Clear();
-                Console.WriteLine($"No incident found with ID: {parsedId}. Try again.");
+                AnsiConsole.Clear();
+                AnsiConsole.WriteLine($"No incident found with ID: {parsedId}. Try again.");
             }
         }
         else
         {
-            Console.WriteLine("Invalid ID format. Try again.");
+            AnsiConsole.WriteLine("Invalid ID format. Try again.");
         }
     }
 }
@@ -319,7 +356,7 @@ static Severity GetSeverityInput(string prompt, bool defaultAllowed = false)
 {
     while (true)
     {
-        Console.Write(prompt);
+        AnsiConsole.Write(prompt);
         string input = Console.ReadLine() ?? "";
 
         if (string.IsNullOrEmpty(input))
@@ -335,7 +372,7 @@ static Severity GetSeverityInput(string prompt, bool defaultAllowed = false)
             return (Severity)severity;
         }
 
-        Console.WriteLine("Invalid input! Please enter a value between 1-4" + (defaultAllowed ? " or press Enter for default value." : "."));
+        AnsiConsole.WriteLine("Invalid input! Please enter a value between 1-4" + (defaultAllowed ? " or press Enter for default value." : "."));
     }
 }
 
@@ -358,7 +395,7 @@ static IncidentStatus GetStatusInput(string prompt, bool defaultAllowed = false)
     IncidentStatus result;
     do
     {
-        Console.Write(prompt);
+        AnsiConsole.Markup(prompt);
         input = Console.ReadLine() ?? "";
 
         if (defaultAllowed && string.IsNullOrEmpty(input))
@@ -367,7 +404,7 @@ static IncidentStatus GetStatusInput(string prompt, bool defaultAllowed = false)
         if (Enum.TryParse<IncidentStatus>(input, true, out result))
             return result;
 
-        Console.WriteLine("Invalid status. Please enter again.");
+        AnsiConsole.WriteLine("Invalid status. Please enter again.");
 
     } while (true);
 }

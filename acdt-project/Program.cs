@@ -28,10 +28,7 @@ do
             "Edit Incident",
             "Close Incident",
             "Escalate",
-            "List Users",
-            "Add User",
-            "Delete User",
-            "Message User",
+            "Manage Users",
             "Exit"
         }));
     
@@ -52,18 +49,8 @@ do
         case "Escalate":
             EscalateIncident(incidentList);
             break;
-        case "List Users":
-            ShowUsers();
-            break;
-        case "Add User":
-            AddUser(roleObj);
-            break;
-        case "Delete User":
-            ShowUsers();
-            DeleteUser(1);
-            break;
-        case "Message User":
-            SendNotification();
+        case "Manage Users":
+            ManageUsers();
             break;
         case "Exit":
             Environment.Exit(0);
@@ -147,6 +134,41 @@ static void EditIncident(List<Incident> incidentList)
     }
 }
 
+static void ManageUsers()
+{
+    var choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
+        .Title("What would you like to do")
+        .PageSize(10)
+        .MoreChoicesText("[grey](Use Up/Down to view more options)[/]")
+        .AddChoices(new[]
+        {
+            "List Users",
+            "Add User",
+            "Delete User",
+            "Messaging",
+            "Exit"
+        }));
+    switch (choice)
+    {
+        case "List Users":
+            ShowUsers();
+            break;
+        case "Add User":
+            Role roleObj = new Role();
+            AddUser(roleObj);
+            break;
+        case "Delete User":
+            DeleteUser();
+            break;
+        case "Messaging":
+            Messaging();
+            break;
+        case "Exit":
+            Environment.Exit(0);
+            break;
+    }
+}
+
 static void CloseIncident(List<Incident> incidentList)
 {
     Incident? incidentToEdit = SelectExistingIncident(incidentList);
@@ -161,15 +183,63 @@ static void CloseIncident(List<Incident> incidentList)
 
 static void EscalateIncident(List<Incident> incidentList)
 {
-    if (SelectExistingIncident(incidentList) != null)
+    Incident incidentToEscalate = SelectExistingIncident(incidentList);
+    
+    var choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
+        .Title("Select new severity:")
+        .PageSize(10)
+        .MoreChoicesText("[grey](Use Up/Down to view more options)[/]")
+        .AddChoices(new[]
+        {
+            "Low",
+            "Medium",
+            "High",
+            "Critical"
+        }));
+
+    switch (choice)
     {
-        AnsiConsole.WriteLine("Incident escalated successfully!\nPress any key to continue...");
+        case "Low":
+            incidentToEscalate.Severity = Severity.Low;
+            Incident.UpdateIncident(incidentToEscalate);
+            
+            break;
+        case "Medium":
+            incidentToEscalate.Severity = Severity.Medium;
+            Incident.UpdateIncident(incidentToEscalate);
+            break;
+        case "High":
+            incidentToEscalate.Severity = Severity.High;
+            Incident.UpdateIncident(incidentToEscalate);
+            break;
+        case "Critical":
+            incidentToEscalate.Severity = Severity.Critical;
+            Incident.UpdateIncident(incidentToEscalate);
+            break;
     }
     
-    // use the SelectExistingIncident and check if the return type is not null
-    if(SelectExistingIncident(incidentList) != null)
+    var choice1 = AnsiConsole.Prompt(new SelectionPrompt<string>()
+        .Title("Who is responsible now?:")
+        .PageSize(10)
+        .MoreChoicesText("[grey](Use Up/Down to view more options)[/]")
+        .AddChoices(new[]
+        {
+            "Dev Team",
+            "SOC",
+            "CISO",
+        }));
+
+    switch (choice1)
     {
-        SendNotification();
+        case "Dev Team":
+            SendNotification("DevTeam");
+            break;
+        case "SOC":
+            SendNotification("SOC");
+            break;
+        case "CISO":
+            SendNotification("CISO");
+            break;
     }
 }
 
@@ -216,15 +286,25 @@ static void ShowUsers()
     Console.ReadKey();
 }
 
-static void DeleteUser(int userId)
+static void DeleteUser()
 {
-    User.DeleteUser(userId);
+    ShowUsers();
+    string username = GetInput("Enter the name of the user to delete: ");
+    User userToDelete = User.GetUser(username);
+    User.DeleteUser(userToDelete.UserId);
 }
 
-static void SendNotification()
+static void Messaging()
 {
+    ShowUsers();
     string receiverName = GetInput(("Please enter the name of the receiver: "));
-    User recipient = User.GetUser(receiverName);
+    SendNotification(receiverName);
+}
+
+static void SendNotification(string ReceiverName)
+{
+    
+    User recipient = User.GetUser(ReceiverName);
     
 
     // string defaultText = "What messaging channel would you like to use?:\n" +
@@ -292,6 +372,9 @@ static void SendNotification()
             Environment.Exit(0);
             break;
     }
+    AnsiConsole.WriteLine();
+    AnsiConsole.Markup("[bold]Press any key to continue...[/]");
+    Console.ReadKey();
 }
 
 // Helper functions
@@ -407,4 +490,18 @@ static IncidentStatus GetStatusInput(string prompt, bool defaultAllowed = false)
         AnsiConsole.WriteLine("Invalid status. Please enter again.");
 
     } while (true);
+}
+
+void InitDevTeam(Role roleObj)
+{
+    if (User.DoesUserExist("DevTeam") == false)
+    {
+        Console.WriteLine("Emergency contacts added");
+        User DevTeam = new User("DevTeam", roleObj.roleID, "000-222-DEV", "devteam@acdt.at");
+        User SOC = new User("SOC", roleObj.roleID, "000-222-SOC", "soc@acdt.at");
+        User CISO = new User("CISO", roleObj.roleID, "000-222-CISO", "ciso@acdt.at");
+        User.AddUser(DevTeam);
+        User.AddUser(SOC);
+        User.AddUser(CISO); 
+    }
 }

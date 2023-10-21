@@ -8,10 +8,11 @@ namespace acdt_project.Database
     {
         public DbSet<Incident> Incidents { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Role> Roles { get; set; }
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var connectionString = "Server=acdt-mariadb;Port=3306;Database=acdtDatabase;User=root;Password=root;";
+            var connectionString = "Server=localhost;Port=3306;Database=acdtDatabase;User=root;Password=root;";
             var serverVersion = new MySqlServerVersion(new Version(8, 0, 29));
 
             optionsBuilder.UseMySql(connectionString, serverVersion, builder =>

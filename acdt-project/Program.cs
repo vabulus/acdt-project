@@ -1,6 +1,7 @@
 ﻿using System.Xml;
 using acdt_project.Classes;
 using acdt_project.Enums;
+using Pomelo.EntityFrameworkCore.MySql.Query.ExpressionTranslators.Internal;
 using Spectre.Console;
 
 
@@ -13,7 +14,7 @@ Role roleObj = new Role();
 
 do
 {
-    
+    InitDevTeam(roleObj);
     List<Incident> incidentList = Incident.FetchIncidents();
     Console.Clear();
     
@@ -63,7 +64,7 @@ do
             DeleteUser(1);
             break;
         case "Message User":
-            SendNotification();
+            Messaging();
             break;
         case "Exit":
             Environment.Exit(0);
@@ -81,6 +82,7 @@ static void ShowIncidents(List<Incident> incidentList)
     table.AddColumn("CVE");
     table.AddColumn("System");
     table.AddColumn("Description");
+    table.AddColumn("Issuer");
 
     foreach (var incident in incidentList)
     {
@@ -89,7 +91,8 @@ static void ShowIncidents(List<Incident> incidentList)
             incident.Severity.ToString(),
             incident.Cve,
             incident.System,
-            incident.Description
+            incident.Description,
+            incident.Issuer.ToString()
         );
     }
 
@@ -161,15 +164,63 @@ static void CloseIncident(List<Incident> incidentList)
 
 static void EscalateIncident(List<Incident> incidentList)
 {
-    if (SelectExistingIncident(incidentList) != null)
+    Incident incidentToEscalate = SelectExistingIncident(incidentList);
+    
+    var choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
+        .Title("Select new severity:")
+        .PageSize(10)
+        .MoreChoicesText("[grey](Use Up/Down to view more options)[/]")
+        .AddChoices(new[]
+        {
+            "Low",
+            "Medium",
+            "High",
+            "Critical"
+        }));
+
+    switch (choice)
     {
-        AnsiConsole.WriteLine("Incident escalated successfully!\nPress any key to continue...");
+        case "Low":
+            incidentToEscalate.Severity = Severity.Low;
+            Incident.UpdateIncident(incidentToEscalate);
+            
+            break;
+        case "Medium":
+            incidentToEscalate.Severity = Severity.Medium;
+            Incident.UpdateIncident(incidentToEscalate);
+            break;
+        case "High":
+            incidentToEscalate.Severity = Severity.High;
+            Incident.UpdateIncident(incidentToEscalate);
+            break;
+        case "Critical":
+            incidentToEscalate.Severity = Severity.Critical;
+            Incident.UpdateIncident(incidentToEscalate);
+            break;
     }
     
-    // use the SelectExistingIncident and check if the return type is not null
-    if(SelectExistingIncident(incidentList) != null)
+    var choice1 = AnsiConsole.Prompt(new SelectionPrompt<string>()
+        .Title("Who is responsible now?:")
+        .PageSize(10)
+        .MoreChoicesText("[grey](Use Up/Down to view more options)[/]")
+        .AddChoices(new[]
+        {
+            "Dev Team",
+            "SOC",
+            "CISO",
+        }));
+
+    switch (choice1)
     {
-        SendNotification();
+      case "Dev Team":
+          SendNotification("DevTeam");
+          break;
+      case "SOC":
+          SendNotification("SOC");
+          break;
+      case "CISO":
+          SendNotification("CISO");
+          break;
     }
 }
 
@@ -221,10 +272,17 @@ static void DeleteUser(int userId)
     User.DeleteUser(userId);
 }
 
-static void SendNotification()
+static void Messaging()
 {
+    ShowUsers();
     string receiverName = GetInput(("Please enter the name of the receiver: "));
-    User recipient = User.GetUser(receiverName);
+    SendNotification(receiverName);
+}
+
+static void SendNotification(string ReceiverName)
+{
+    
+    User recipient = User.GetUser(ReceiverName);
     
 
     // string defaultText = "What messaging channel would you like to use?:\n" +
@@ -292,6 +350,9 @@ static void SendNotification()
             Environment.Exit(0);
             break;
     }
+    AnsiConsole.WriteLine();
+    AnsiConsole.Markup("[bold]Press any key to continue...[/]");
+    Console.ReadKey();
 }
 
 // Helper functions
@@ -369,7 +430,7 @@ static Severity GetSeverityInput(string prompt, bool defaultAllowed = false)
 
         if (int.TryParse(input, out int severity) && severity >= 1 && severity <= 4)
         {
-            return (Severity)severity;
+            return (Severity)severity - 1 ;
         }
 
         AnsiConsole.WriteLine("Invalid input! Please enter a value between 1-4" + (defaultAllowed ? " or press Enter for default value." : "."));
@@ -408,3 +469,18 @@ static IncidentStatus GetStatusInput(string prompt, bool defaultAllowed = false)
 
     } while (true);
 }
+
+void InitDevTeam(Role roleObj)
+{
+    if (User.DoesUserExist("DevTeam") == false)
+    {
+        Console.WriteLine("Emergency contacts added");
+        User DevTeam = new User("DevTeam", roleObj.roleID, "000-222-DEV", "devteam@acdt.at");
+        User SOC = new User("SOC", roleObj.roleID, "000-222-SOC", "soc@acdt.at");
+        User CISO = new User("CISO", roleObj.roleID, "000-222-CISO", "ciso@acdt.at");
+        User.AddUser(DevTeam);
+        User.AddUser(SOC);
+        User.AddUser(CISO); 
+    }
+}
+

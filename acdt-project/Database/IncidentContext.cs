@@ -8,6 +8,8 @@ namespace acdt_project.Database
     {
         public DbSet<Incident> Incidents { get; set; }
         public DbSet<User> Users { get; set; }
+        
+        public DbSet<Role> Roles { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

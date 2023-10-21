@@ -16,7 +16,7 @@ public class SignalNotification : INotification
 
             if (user != null)
             {
-                Console.WriteLine($"Mail Message sent to {user.Username} via {user.PhoneNumber} and Signal ");
+                Console.WriteLine($"Signal Message sent to {user.Username} via {user.PhoneNumber} and Signal ");
             }
             else
             {

@@ -1,63 +1,90 @@
 # SIMS - Security Incident Management System
 
+![C#](https://badgen.net/badge/language/C%23/purple)
 ![.NET Version](https://img.shields.io/badge/.NET-7.0-brightgreen)
+![Entity Framework](https://badgen.net/badge/Entity%20Framework/Supported/green)
+![MariaDB](https://badgen.net/badge/MariaDB/Supported/blue?icon=mariadb)
 ![License](https://img.shields.io/badge/License-MIT-blue)
+![Docker](https://badgen.net/badge/icon/docker?icon=docker&label)
+![Docker Compose](https://badgen.net/badge/icon/docker-compose?icon=docker&label)
 
 **Version:** 1.0
 
 ## Inhaltsverzeichnis
-1. [Beschreibung](#beschreibung)
-2. [Systemanforderungen](#systemanforderungen)
-3. [Installation](#installation)
-4. [Verwendung](#verwendung)
-5. [Datenbank](#datenbank)
-6. [Docker](#docker)
-7. [Beispiel](#beispiel)
-8. [Roadmap](#roadmap)
-9. [Lizenz](#lizenz)
-10. [Hinweis zu SAST](#hinweis-zu-sast)
-11. [ER-Diagramm](#er-diagramm)
-12. [Klassendiagramm](#klassendiagramm)
-13. [Git-Repository](#git-repository)
+- [Beschreibung](#beschreibung)
+- [Systemanforderungen](#systemanforderungen)
+- [Installation](#installation)
+- [Verwendung](#verwendung)
+- [ER-Diagramm](#er-diagramm)
+- [Klassendiagramm](#klassendiagramm)
+- [Semgrep Results](#semgrep-results)
 
 ## Beschreibung
 Das "Security Incident Management System" (SIMS) ist ein Tool zur Protokollierung von IT-Sicherheitsvorfällen. Es ermöglicht Benutzern das Erfassen, Eskalieren und Benachrichtigen von sicherheitsrelevanten Vorfällen.
 
 **Features:**
-- Manuelle Erfassung von sicherheitsrelevanten Vorfällen (Bearbeiter, Melder, Schweregrad, Status, CVE, System, Beschreibung, Zeitstempel, etc.).
-- Eskalation an den nächsten Benutzer.
-- Notifizierung über verschiedene Kanäle (SMS, Signal, etc.).
-- Benutzerverwaltung mit Rollen (Administratoren, Benutzer, etc.).
-- Protokollierung von Vorfällen in einer Log-Tabelle.
-- Relationale Datenbank zur Speicherung von Vorfällen, Benutzern und Log-Daten.
+
+📝 - **Manuelle Erfassung**: Sicherheitsrelevante Vorfälle können detailreich (Bearbeiter, Melder, Schweregrad, Status, CVE, System, Beschreibung, Zeitstempel) erfasst werden.
+
+⏫ - **Eskalation**: Automatische Weiterleitung an den nächsten Benutzer.
+
+🔔 - **Notifizierung**: Benachrichtigungen über verschiedene Kanäle wie SMS und Signal.
+
+👥 - **Benutzerverwaltung**: Unterschiedliche Rollen (Administratoren, Benutzer) ermöglichen eine gezielte Zugriffskontrolle.
+
+📊 - **Protokollierung**: Alle Vorfälle werden in einer übersichtlichen Log-Tabelle gespeichert.
+
+🗃️ - **Datenbankspeicherung**: Ein relationales Datenbanksystem speichert Vorfälle, Benutzerdaten und Logs.
 
 ## Systemanforderungen
-- Betriebssystem: Unterstützte Betriebssysteme
+
+### Software
+- Betriebssystem: Windows 10+, Linux
 - .NET-Runtime: .NET 7.0
+
+### Tools
 - Docker: Erforderlich, um die Anwendung und die Datenbank in Containern bereitzustellen
-- Docker-Container starten:
-    - docker-compose up -d ausführen
+- Docker-compose: Tool zur Definition und zum Laufen multi-container Docker Anwendungen.
+
 
 ## Installation
 1. Klonen Sie das Git-Repository: [Link zum Repository](https://github.com/IhrBenutzername/sims)
-2. Führen Sie die Docker-Compose-Datei aus, um die Anwendung und die Datenbank zu starten.
+
+Folgenden Befehl ausführen: ``docker-compose up -d``
 
 ## Verwendung
 1. Starten Sie die Anwendung.
 2. Wählen Sie aus den angebotenen Optionen, um Vorfälle anzuzeigen, hinzuzufügen, zu bearbeiten, zu schließen oder das Programm zu beenden.
 
-## Datenbank
-Die Anwendung verwendet eine MySQL-Datenbank zur Speicherung von Vorfällen und Benutzerinformationen. Das Datenbankschema sind in den Diagrammen dokumentiert.
+## Roadmap
+1. **Initialisierung**
+    - Projektstart
+    - Systemarchitektur
+    - Datenbankmodellierung
 
-## Docker
-Die Anwendung und die Datenbank wird mithilfe von Docker-Containern bereitgestellt. Die Docker-compose Datei wird benötigt um Docker zu starten.
+2. **Hauptfeatures**
+    - Manuelle Erfassung
+    - Eskalationsmechanismus
+    - Notifizierungs-Integration
+        - SMS
+        - Signal
+    - Benutzerverwaltung
+        - Administratoren
+        - Benutzer
+    - Protokollierung
 
-## Lizenz
-Dieses Projekt steht unter der [MIT-Lizenz](https://opensource.org/licenses/MIT).
+3. **Zukünftige Features**
+    - Automatische Threat-Erkennung
+    - Dashboards und Berichte
+    - Integration von Drittanbieter-Security-Tools
+    - Cloud-Sicherheitsmaßnahmen
+    - Mobile App Entwicklung
+    - Fortgeschrittene Analysetools
 
 ## ER-Diagramm
 
 ## Klassendiagramm
+![classdiagram.png](classdiagram.png)
 
 ## Semgrep Results
 | Key            | Value                                                                                                                                                                                                                                                                                                                   |
@@ -67,3 +94,5 @@ Dieses Projekt steht unter der [MIT-Lizenz](https://opensource.org/licenses/MIT)
 | results        | []                                                                                                                                                                                                                                                                                                                       |
 | skipped_rules  | []                                                                                                                                                                                                                                                                                                                       |
 | version        | "1.45.0"                                                                                                                                                                                                                                                                                                                 |
+
+Dieses Projekt steht unter der [MIT-Lizenz](https://opensource.org/licenses/MIT).

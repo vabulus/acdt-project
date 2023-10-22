@@ -95,4 +95,13 @@ Folgenden Befehl ausführen: ``docker-compose up -d``
 | skipped_rules  | []                                                                                                                                                                                                                                                                                                                       |
 | version        | "1.45.0"                                                                                                                                                                                                                                                                                                                 |
 
+## Contributors
+
+Eine Liste von Personen, die zu diesem Projekt beigetragen haben:
+
+- [MGAdam](https://github.com/MGAdam)
+- [besterbursch](https://github.com/besterbursch)
+- [Kommandozeile](https://github.com/Kommandozeile)
+
+## Lizenz
 Dieses Projekt steht unter der [MIT-Lizenz](https://opensource.org/licenses/MIT).

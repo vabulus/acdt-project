@@ -4,12 +4,10 @@ using Spectre.Console;
 
 
 User userObj = UserAuthentication();
-Role roleObj = new Role();
-InitDevTeam(roleObj);
+InitDevTeam(new Role());
 
 do
 {
-    
     List<Incident> incidentList = Incident.FetchIncidents();
     Console.Clear();
     
@@ -186,63 +184,66 @@ static void CloseIncident(List<Incident> incidentList)
 
 static void EscalateIncident(List<Incident> incidentList)
 {
-    Incident incidentToEscalate = SelectExistingIncident(incidentList);
-    
-    var choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
-        .Title("Select new severity:")
-        .PageSize(10)
-        .MoreChoicesText("[grey](Use Up/Down to view more options)[/]")
-        .AddChoices(new[]
-        {
-            "Low",
-            "Medium",
-            "High",
-            "Critical"
-        }));
+    Incident? incidentToEscalate = SelectExistingIncident(incidentList);
 
-    switch (choice)
+    if (incidentToEscalate != null)
     {
-        case "Low":
-            incidentToEscalate.Severity = Severity.Low;
-            Incident.UpdateIncident(incidentToEscalate);
+        var choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
+            .Title("Select new severity:")
+            .PageSize(10)
+            .MoreChoicesText("[grey](Use Up/Down to view more options)[/]")
+            .AddChoices(new[]
+            {
+                "Low",
+                "Medium",
+                "High",
+                "Critical"
+            }));
+
+        switch (choice)
+        {
+            case "Low":
+                incidentToEscalate.Severity = Severity.Low;
+                Incident.UpdateIncident(incidentToEscalate);
             
-            break;
-        case "Medium":
-            incidentToEscalate.Severity = Severity.Medium;
-            Incident.UpdateIncident(incidentToEscalate);
-            break;
-        case "High":
-            incidentToEscalate.Severity = Severity.High;
-            Incident.UpdateIncident(incidentToEscalate);
-            break;
-        case "Critical":
-            incidentToEscalate.Severity = Severity.Critical;
-            Incident.UpdateIncident(incidentToEscalate);
-            break;
-    }
+                break;
+            case "Medium":
+                incidentToEscalate.Severity = Severity.Medium;
+                Incident.UpdateIncident(incidentToEscalate);
+                break;
+            case "High":
+                incidentToEscalate.Severity = Severity.High;
+                Incident.UpdateIncident(incidentToEscalate);
+                break;
+            case "Critical":
+                incidentToEscalate.Severity = Severity.Critical;
+                Incident.UpdateIncident(incidentToEscalate);
+                break;
+        }
     
-    var choice1 = AnsiConsole.Prompt(new SelectionPrompt<string>()
-        .Title("Who is responsible now?:")
-        .PageSize(10)
-        .MoreChoicesText("[grey](Use Up/Down to view more options)[/]")
-        .AddChoices(new[]
-        {
-            "Dev Team",
-            "SOC",
-            "CISO",
-        }));
+        var choice1 = AnsiConsole.Prompt(new SelectionPrompt<string>()
+            .Title("Who is responsible now?:")
+            .PageSize(10)
+            .MoreChoicesText("[grey](Use Up/Down to view more options)[/]")
+            .AddChoices(new[]
+            {
+                "Dev Team",
+                "SOC",
+                "CISO",
+            }));
 
-    switch (choice1)
-    {
-        case "Dev Team":
-            SendNotification("DevTeam");
-            break;
-        case "SOC":
-            SendNotification("SOC");
-            break;
-        case "CISO":
-            SendNotification("CISO");
-            break;
+        switch (choice1)
+        {
+            case "Dev Team":
+                SendNotification("DevTeam");
+                break;
+            case "SOC":
+                SendNotification("SOC");
+                break;
+            case "CISO":
+                SendNotification("CISO");
+                break;
+        }
     }
 }
 
@@ -392,15 +393,8 @@ static Incident? SelectExistingIncident(List<Incident> incidentList)
 static User UserAuthentication()
 {
     // // dummy user authentication
-    // Console.WriteLine("Welcome to the ACDT Incident Management System");
-    // Console.Write("Please enter your username: ");
-    // string username = Console.ReadLine() ?? "";
-    // Console.Write("Please enter your password: ");
-    // string password = Console.ReadLine() ?? "";
-    //
     // now we get the user from the database, however we just use a dummy user for now
     User user = new User("admin", 1, "123456789", "test@fkasdf.com", 1);
-
     return user;
 }
 
@@ -465,11 +459,11 @@ void InitDevTeam(Role roleObj)
     if (User.DoesUserExist("DevTeam") == false)
     {
         Console.WriteLine("Emergency contacts added");
-        User DevTeam = new User("DevTeam", roleObj.roleID, "000-222-DEV", "devteam@acdt.at");
-        User SOC = new User("SOC", roleObj.roleID, "000-222-SOC", "soc@acdt.at");
-        User CISO = new User("CISO", roleObj.roleID, "000-222-CISO", "ciso@acdt.at");
-        User.AddUser(DevTeam);
-        User.AddUser(SOC);
-        User.AddUser(CISO); 
+        User devTeam = new User("DevTeam", roleObj.roleID, "000-222-DEV", "devteam@acdt.at");
+        User soc = new User("SOC", roleObj.roleID, "000-222-SOC", "soc@acdt.at");
+        User ciso = new User("CISO", roleObj.roleID, "000-222-CISO", "ciso@acdt.at");
+        User.AddUser(devTeam);
+        User.AddUser(soc);
+        User.AddUser(ciso); 
     }
 }

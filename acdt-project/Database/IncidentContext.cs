@@ -11,7 +11,6 @@ namespace acdt_project.Database
         public DbSet<Role> Roles { get; set; }
         public DbSet<Log> Log { get; set; }  
         
-        
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var connectionString = "Server=localhost;Port=3306;Database=acdtDatabase;User=root;Password=root;";
@@ -19,11 +18,10 @@ namespace acdt_project.Database
 
             optionsBuilder.UseMySql(connectionString, serverVersion, builder =>
                 {
-                    // Configure retry behavior here
                     builder.EnableRetryOnFailure(
-                        maxRetryCount: 5,               // Number of retries
-                        maxRetryDelay: TimeSpan.FromSeconds(10), // Delay between retries
-                        errorNumbersToAdd: null         // SQL error codes to consider transient
+                        maxRetryCount: 5,             
+                        maxRetryDelay: TimeSpan.FromSeconds(10), 
+                        errorNumbersToAdd: null     
                     );
                 })
                 .EnableSensitiveDataLogging()

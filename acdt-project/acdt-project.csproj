@@ -1,35 +1,35 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <OutputType>Exe</OutputType>
-        <TargetFramework>net7.0</TargetFramework>
-        <RootNamespace>acdt_project</RootNamespace>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    </PropertyGroup>
-
-    <ItemGroup>
-      <None Remove=".vs" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.12" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.12">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
-      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.12" />
-      <PackageReference Include="MySql.Data.EntityFrameworkCore" Version="8.0.22" />
-      <PackageReference Include="MySql.EntityFrameworkCore" Version="7.0.5" />
-      <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="7.0.0" />
-      <PackageReference Include="Spectre.Console" Version="0.47.1-preview.0.27" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Content Include="..\.dockerignore">
-        <Link>.dockerignore</Link>
-      </Content>
-    </ItemGroup>
-
+  <PropertyGroup>
+    <GenerateProgramFile>false</GenerateProgramFile>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <RootNamespace>acdt_project</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove=".vs"/>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.12"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.12">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.12"/>
+    <PackageReference Include="MySql.Data.EntityFrameworkCore" Version="8.0.22"/>
+    <PackageReference Include="MySql.EntityFrameworkCore" Version="7.0.5"/>
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="7.0.0"/>
+    <PackageReference Include="Spectre.Console" Version="0.47.1-preview.0.27"/>
+    <PackageReference Include="xunit" Version="2.5.3"/>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0-preview-23503-02"/>
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3"/>
+    <PackageReference Include="Moq" Version="4.20.69"/>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\.dockerignore">
+      <Link>.dockerignore</Link>
+    </Content>
+  </ItemGroup>
 </Project>

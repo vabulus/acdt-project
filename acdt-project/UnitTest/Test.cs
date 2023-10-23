@@ -1,9 +1,11 @@
 using System;
 using Xunit;
+using System.IO;
 using acdt_project.Classes;
 using Microsoft.EntityFrameworkCore;
 using acdt_project.Enums;
 using acdt_project.Database;
+using Microsoft.EntityFrameworkCore.Storage;
 
 
 namespace acdt_project.UnitTest
@@ -11,10 +13,9 @@ namespace acdt_project.UnitTest
     public class Test
     {
 
-/*
-Der Test prüft also, ob die ToString-Methode der Incident-Klasse die Attribute der Instanz 
-(wie z.B. Severity, IncidentStatus, Cve, usw.) korrekt in einer Zeichenfolge darstellt.
-*/
+
+//Der Test prüft also, ob die ToString-Methode der Incident-Klasse die Attribute der Instanz (wie z.B. Severity, IncidentStatus, Cve, usw.) korrekt in einer Zeichenfolge darstellt.
+
 
         [Fact]
         public void IncidentTest()
@@ -82,7 +83,7 @@ Der Test prüft also, ob die ToString-Methode der Incident-Klasse die Attribute 
         [Fact]
         public void AddUserToDataBase()
         {
-            // Arrange
+
             User newUser = new User(
                 "newUse",
                 12,
@@ -90,11 +91,9 @@ Der Test prüft also, ob die ToString-Methode der Incident-Klasse die Attribute 
                 "Test@test.at"
             );
 
-            // Act
             User.AddUser(newUser);
             var retrievedUser = User.GetUser(newUser.Username);
 
-            // Assert
             Assert.NotNull(retrievedUser);
             Assert.Equal(newUser.UserId, retrievedUser.UserId);
             Assert.Equal(newUser.Username, retrievedUser.Username);
@@ -107,26 +106,43 @@ Der Test prüft also, ob die ToString-Methode der Incident-Klasse die Attribute 
         }
 
 
-/*
-        public void CloseIncident()
+//Überprüft ob ein User bereits existiert
+        [Fact]
+        public void DoesUserExist_UserExists_ReturnsTrue()
         {
-            Incident incident = new Incident(
-                Enums.Severity.Low,
-                IncidentStatus.Open,
-                "CVW-2023-3214",
-                DateTime.Now,
-                6,
-                "systemX",
-                "noch ein Incident" 
+            User newUser = new User(
+                "existingUser",
+                1,
+                "1234567890",
+                "test@test.com"
             );
 
-            Incident.CloseIncident(incident);
-            var closedIncident = Incident.GetIncident(incident.IncidentId);
+            User.AddUser(newUser);
+            bool userExists = User.DoesUserExist("existingUser");
 
-            Assert.NotNull(closedIncident);
-            Assert.Equal(IncidentStatus.Closed, closedIncident.Status);
+            Assert.True(userExists);
+
+            User.DeleteUser(newUser.UserId);
         }
-        */
+
+
+        [Fact]
+        public void DoesUserExist_UserDoesNotExist_ReturnsFalse()
+        {
+            // Hier erstellen wir einen Benutzer, aber löschen ihn sofort
+            User newUser = new User(
+                "nonExistentUser",
+                2,
+                "9876543210",
+                "test2@test.com"
+            );
+            User.AddUser(newUser);
+            User.DeleteUser(newUser.UserId);
+
+            bool userExists = User.DoesUserExist("nonExistentUser");
+
+            Assert.False(userExists);
+        }
     }
 }
     

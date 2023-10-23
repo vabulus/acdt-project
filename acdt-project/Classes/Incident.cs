@@ -75,11 +75,7 @@ public class Incident
             context.SaveChanges();
         }   
     }
-
-    public static void CloseIncident()
-    {
-        throw new NotImplementedException();
-    }
+    
 
     public static List<Incident> FetchIncidents()
     {

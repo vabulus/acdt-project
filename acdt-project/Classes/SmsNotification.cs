@@ -16,7 +16,7 @@ public class SmsNotification : INotification
 
             if (user != null)
             {
-                Console.WriteLine($"Mail Message sent to {user.Username} via {user.PhoneNumber} and SMS ");
+                Console.WriteLine($"SMS Message sent to {user.Username} via {user.PhoneNumber} and SMS ");
             }
             else
             {

@@ -1,15 +1,11 @@
-﻿using System.Xml;
-using acdt_project.Classes;
+﻿using acdt_project.Classes;
 using acdt_project.Enums;
 using Spectre.Console;
 
 
-string[] severityArray = Enum.GetNames(typeof(Severity));
-string[] statusArray = Enum.GetNames(typeof(IncidentStatus));
-
-
 User userObj = UserAuthentication();
 Role roleObj = new Role();
+InitDevTeam(roleObj);
 
 do
 {
@@ -91,14 +87,6 @@ static void AddIncident(User userObj)
     Console.Clear();
     Severity severityUser = GetSeverityInput("Enter the severity of the incident (1-4, default = 1): ");
     
-    // var favorites = AnsiConsole.Prompt(
-    //     new SelectionPrompt<string>()
-    //         .PageSize(10)
-    //         .Title("What is the status of the incident?")
-    //         .MoreChoicesText("[grey](Move up and down to reveal more fruits)[/]")
-    //         .AddChoices(statusArray));
-    
-    
     string cve = GetInput("Enter the CVE of the incident: ");
     string system = GetInput("Enter the system of the incident: ");
     string description = GetInput("Enter the description of the incident: ");
@@ -123,11 +111,26 @@ static void EditIncident(List<Incident> incidentList)
     Incident? incidentToEdit = SelectExistingIncident(incidentList);
     if (incidentToEdit != null)
     {
-        incidentToEdit.Status = GetStatusInput($"Status (default = {incidentToEdit.Status.ToString()}):", true);
-        incidentToEdit.Severity = GetSeverityInput($"Severity (default = {incidentToEdit.Severity.ToString()}): ", true);
-        incidentToEdit.Cve = GetInput($"CVE (default = {incidentToEdit.Cve}): ", true);
-        incidentToEdit.Description = GetInput($"Description (default = {incidentToEdit.Description}): ", true);
-                            
+        var statusInput = GetStatusInput($"Status (default = {incidentToEdit.Status.ToString()}):", true);
+        incidentToEdit.Status = statusInput.Equals(default) 
+            ? incidentToEdit.Status 
+            : statusInput;
+
+        var severityInput = GetSeverityInput($"Severity (default = {incidentToEdit.Severity.ToString()}): ", true);
+        incidentToEdit.Severity = severityInput.Equals(default) 
+            ? incidentToEdit.Severity 
+            : severityInput;
+
+        var cveInput = GetInput($"CVE (default = {incidentToEdit.Cve}): ", true);
+        incidentToEdit.Cve = string.IsNullOrWhiteSpace(cveInput) 
+            ? incidentToEdit.Cve 
+            : cveInput;
+
+        var descriptionInput = GetInput($"Description (default = {incidentToEdit.Description}): ", true);
+        incidentToEdit.Description = string.IsNullOrWhiteSpace(descriptionInput) 
+            ? incidentToEdit.Description 
+            : descriptionInput;
+        
         Incident.UpdateIncident(incidentToEdit);  
         Console.WriteLine($"Incident ID {incidentToEdit.IncidentId} edited successfully!\nPress any key to continue...");
         Console.ReadKey();
@@ -301,43 +304,9 @@ static void Messaging()
     SendNotification(receiverName);
 }
 
-static void SendNotification(string ReceiverName)
+static void SendNotification(string receiverName)
 {
-    
-    User recipient = User.GetUser(ReceiverName);
-    
-
-    // string defaultText = "What messaging channel would you like to use?:\n" +
-    //                      "1 – Email\n" +
-    //                      "2 – Signal\n" +
-    //                      "3 – SMS\n" +
-    //                      "4 – Exit\n";
-    //
-    // Console.WriteLine(defaultText);
-    // Console.Write("Enter your choice: ");
-    // string userInput = Console.ReadLine() ?? "";
-    //
-    // switch (Convert.ToInt16(userInput))
-    // {
-    //     case 1:
-    //         INotification mailNotification = new MailNotification();
-    //         mailNotification.Receiver = recipient.UserId;
-    //         mailNotification.Notify();
-    //         break;
-    //     case 2:
-    //         INotification signalNotification = new SignalNotification();
-    //         signalNotification.Receiver = recipient.UserId;
-    //         signalNotification.Notify();
-    //         break;
-    //     case 3:
-    //         INotification smsNotification = new SmsNotification();
-    //         smsNotification.Receiver = recipient.UserId;
-    //         smsNotification.Notify();
-    //         break;
-    // }
-    //
-    // List<Incident> incidentList = Incident.FetchIncidents();
-    // Console.Clear();
+    User recipient = User.GetUser(receiverName);
     
     var choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
         .Title("What messaging channel would you like to use?:")
@@ -470,7 +439,6 @@ static string GetInput(string prompt, bool defaultAllowed = false)
 
     return input;
 }
-
 
 static IncidentStatus GetStatusInput(string prompt, bool defaultAllowed = false)
 {

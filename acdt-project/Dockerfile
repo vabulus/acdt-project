@@ -11,10 +11,6 @@ RUN dotnet build "acdt-project.csproj" -c Release -o /app/build
 
 FROM build AS publish
 RUN dotnet publish "acdt-project.csproj" -c Release -o /app/publish /p:UseAppHost=false
-RUN dotnet tool install --global dotnet-ef
-ENV PATH="$PATH:/root/.dotnet/tools"
-RUN dotnet ef migrations add InitialCreate
-RUN dotnet ef database update
 
 FROM base AS final
 WORKDIR /app

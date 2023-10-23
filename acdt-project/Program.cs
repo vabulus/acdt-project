@@ -1,7 +1,6 @@
 ﻿using System.Xml;
 using acdt_project.Classes;
 using acdt_project.Enums;
-using Pomelo.EntityFrameworkCore.MySql.Query.ExpressionTranslators.Internal;
 using Spectre.Console;
 
 
@@ -14,7 +13,7 @@ Role roleObj = new Role();
 
 do
 {
-    InitDevTeam(roleObj);
+    
     List<Incident> incidentList = Incident.FetchIncidents();
     Console.Clear();
     
@@ -69,7 +68,6 @@ static void ShowIncidents(List<Incident> incidentList)
     table.AddColumn("CVE");
     table.AddColumn("System");
     table.AddColumn("Description");
-    table.AddColumn("Issuer");
 
     foreach (var incident in incidentList)
     {
@@ -78,8 +76,7 @@ static void ShowIncidents(List<Incident> incidentList)
             incident.Severity.ToString(),
             incident.Cve,
             incident.System,
-            incident.Description,
-            incident.Issuer.ToString()
+            incident.Description
         );
     }
 
@@ -234,15 +231,15 @@ static void EscalateIncident(List<Incident> incidentList)
 
     switch (choice1)
     {
-      case "Dev Team":
-          SendNotification("DevTeam");
-          break;
-      case "SOC":
-          SendNotification("SOC");
-          break;
-      case "CISO":
-          SendNotification("CISO");
-          break;
+        case "Dev Team":
+            SendNotification("DevTeam");
+            break;
+        case "SOC":
+            SendNotification("SOC");
+            break;
+        case "CISO":
+            SendNotification("CISO");
+            break;
     }
 }
 
@@ -455,7 +452,7 @@ static Severity GetSeverityInput(string prompt, bool defaultAllowed = false)
 
         if (int.TryParse(input, out int severity) && severity >= 1 && severity <= 4)
         {
-            return (Severity)severity - 1 ;
+            return (Severity)severity;
         }
 
         AnsiConsole.WriteLine("Invalid input! Please enter a value between 1-4" + (defaultAllowed ? " or press Enter for default value." : "."));
@@ -508,4 +505,3 @@ void InitDevTeam(Role roleObj)
         User.AddUser(CISO); 
     }
 }
-

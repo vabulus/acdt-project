@@ -43,6 +43,22 @@ public class User
         }
     }
 
+    public static bool DoesUserExist(string usernameToCheck)
+    {
+        using (var context = new IncidentContext())
+        {
+            User userToCheck = context.Users.FirstOrDefault(u => u.Username == usernameToCheck);
+            if (userToCheck != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        
+    }
     public static User GetUser(string username)
     {
         using (var context = new IncidentContext())

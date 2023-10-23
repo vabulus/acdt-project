@@ -11,9 +11,9 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./01-use-database.sql:/docker-entrypoint-initdb.d/01-use-database.sql
-      - ./02-create-tables.sql:/docker-entrypoint-initdb.d/02-create-tables.sql
-      - ./03-create-triggers.sql:/docker-entrypoint-initdb.d/03-create-triggers.sql
+      - /database-scripts/01-use-database.sql:/docker-entrypoint-initdb.d/01-use-database.sql
+      - /database-scripts/02-create-tables.sql:/docker-entrypoint-initdb.d/02-create-tables.sql
+      - /database-scripts/03-create-triggers.sql:/docker-entrypoint-initdb.d/03-create-triggers.sql
     networks:
       - acdt-network  # Connect to the custom network
 

@@ -80,8 +80,10 @@ Folgenden Befehl ausführen: ``docker-compose up -d``
     - Cloud-Sicherheitsmaßnahmen
     - Mobile App Entwicklung
     - Fortgeschrittene Analysetools
-
+^
 ## ER-Diagramm
+![erdiagram.png](erdiagram.png)
+
 
 ## Klassendiagramm
 ![classdiagram.png](classdiagram.png)

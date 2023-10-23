@@ -66,23 +66,7 @@ public class User
             return context.Users.SingleOrDefault(i => i.Username == username);
         }
     }
-
-    public static bool DoesUserExist(string usernameToCheck)
-    {
-        using (var context = new IncidentContext())
-        {
-            User userToCheck = context.Users.FirstOrDefault(u => u.Username == usernameToCheck);
-            if (userToCheck != null)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        
-    }
+    
     public static List<User> FetchAllUser()
     {
         using (var context = new IncidentContext())

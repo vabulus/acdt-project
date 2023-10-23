@@ -6,9 +6,11 @@ namespace acdt_project.Database
 {
     public class IncidentContext : DbContext
     {
-        public DbSet<Incident> Incidents { get; set; }
+        public DbSet<Incident> Incidents { get; set; } 
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
+        public DbSet<Log> Log { get; set; }  
+        
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

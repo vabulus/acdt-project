@@ -48,9 +48,8 @@ Das "Security Incident Management System" (SIMS) ist ein Tool zur Protokollierun
 
 
 ## Installation
-1. Klonen Sie das Git-Repository: [Link zum Repository](https://github.com/IhrBenutzername/sims)
-
-Folgenden Befehl ausführen: ``docker-compose up -d``
+1. Klonen Sie das Git-Repository: [Link zum Repository](https://github.com/vabulus/acdt-project)
+2. Folgenden Befehl ausführen: ``docker-compose up -d``
 
 ## Verwendung
 1. Starten Sie die Anwendung.
@@ -80,7 +79,7 @@ Folgenden Befehl ausführen: ``docker-compose up -d``
     - Cloud-Sicherheitsmaßnahmen
     - Mobile App Entwicklung
     - Fortgeschrittene Analysetools
-^
+
 ## ER-Diagramm
 ![erdiagram.png](erdiagram.png)
 

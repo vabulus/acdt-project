@@ -1,12 +1,5 @@
-using System;
 using Xunit;
-using System.IO;
 using acdt_project.Classes;
-using Microsoft.EntityFrameworkCore;
-using acdt_project.Enums;
-using acdt_project.Database;
-using Microsoft.EntityFrameworkCore.Storage;
-
 
 namespace acdt_project.UnitTest
 {
@@ -14,9 +7,7 @@ namespace acdt_project.UnitTest
     {
 
 
-//Der Test prüft also, ob die ToString-Methode der Incident-Klasse die Attribute der Instanz (wie z.B. Severity, IncidentStatus, Cve, usw.) korrekt in einer Zeichenfolge darstellt.
-
-
+        // Der Test prüft also, ob die ToString-Methode der Incident-Klasse die Attribute der Instanz (wie z.B. Severity, IncidentStatus, Cve, usw.) korrekt in einer Zeichenfolge darstellt.
         [Fact]
         public void IncidentTest()
         {
@@ -36,8 +27,7 @@ namespace acdt_project.UnitTest
              //Assert.Equal("Dies ist ein anderer Text", incidentString);
         }
 
-//Dieser Test überprüft, ob die AddIncident-Methode in der Incident-Klasse ordnungsgemäß funktioniert.
-
+        // Dieser Test überprüft, ob die AddIncident-Methode in der Incident-Klasse ordnungsgemäß funktioniert.
         [Fact]
         public void AddsIncidentToDatabe()
         {
@@ -58,7 +48,7 @@ namespace acdt_project.UnitTest
 
         }
 
-//Dieser Test überprüft, ob die GetIncident-Methode in der Incident-Klasse einen Vorfall anhand seiner ID erfolgreich abruft.
+        // Dieser Test überprüft, ob die GetIncident-Methode in der Incident-Klasse einen Vorfall anhand seiner ID erfolgreich abruft.
         [Fact]
         public void GetIncident_ReturnsIncidentByID()
         {
@@ -79,7 +69,7 @@ namespace acdt_project.UnitTest
         }
 
 
-//Dieser Test überprüft, ob die AddUser-Methode in der User-Klasse einen Benutzer erfolgreich hinzufügt und in nacher wieder löscht.
+        // Dieser Test überprüft, ob die AddUser-Methode in der User-Klasse einen Benutzer erfolgreich hinzufügt und in nacher wieder löscht.
         [Fact]
         public void AddUserToDataBase()
         {
@@ -106,7 +96,7 @@ namespace acdt_project.UnitTest
         }
 
 
-//Überprüft ob ein User bereits existiert
+        // Überprüft ob ein User bereits existiert
         [Fact]
         public void DoesUserExist_UserExists_ReturnsTrue()
         {
@@ -125,7 +115,7 @@ namespace acdt_project.UnitTest
             User.DeleteUser(newUser.UserId);
         }
 
-
+        // Überprüft ob ein User nicht existiert
         [Fact]
         public void DoesUserExist_UserDoesNotExist_ReturnsFalse()
         {
@@ -145,6 +135,3 @@ namespace acdt_project.UnitTest
         }
     }
 }
-    
-
-            
